@@ -13,7 +13,7 @@ export class RestaurantRepository {
     // For now, I will select generic fields.
     // For now, I will select generic fields.
     const text = `
-      SELECT id, name, slug, email, password, primary_color, theme_mode, logo_url, hero_image_url, hero_title, hero_subtitle, content_section_image, content_section_title, content_section_body, content_section_2_image, content_section_2_title, content_section_2_body, video_section_title, video_section_subtitle, video_poster_url, video_url, services_data, instagram_username, instagram_images, whatsapp_number, enable_pickup, enable_delivery, created_at, updated_at, features_config
+      SELECT id, name, slug, email, password, primary_color, theme_mode, menu_mode, menu_pdf_url, logo_url, hero_image_url, hero_title, hero_subtitle, content_section_image, content_section_title, content_section_body, content_section_2_image, content_section_2_title, content_section_2_body, video_section_title, video_section_subtitle, video_poster_url, video_url, services_data, instagram_username, instagram_images, whatsapp_number, enable_pickup, enable_delivery, created_at, updated_at, features_config
       FROM restaurants
       WHERE slug = $1
     `;
@@ -26,7 +26,7 @@ export class RestaurantRepository {
    */
   async findRestaurantByEmail(email: string): Promise<IRestaurant | null> {
     const text = `
-      SELECT id, name, slug, email, password, primary_color, theme_mode, logo_url, hero_image_url, hero_title, hero_subtitle, content_section_image, content_section_title, content_section_body, content_section_2_image, content_section_2_title, content_section_2_body, video_section_title, video_section_subtitle, video_poster_url, video_url, services_data, instagram_username, instagram_images, whatsapp_number, enable_pickup, enable_delivery, created_at, updated_at, features_config
+      SELECT id, name, slug, email, password, primary_color, theme_mode, menu_mode, menu_pdf_url, logo_url, hero_image_url, hero_title, hero_subtitle, content_section_image, content_section_title, content_section_body, content_section_2_image, content_section_2_title, content_section_2_body, video_section_title, video_section_subtitle, video_poster_url, video_url, services_data, instagram_username, instagram_images, whatsapp_number, enable_pickup, enable_delivery, created_at, updated_at, features_config
       FROM restaurants
       WHERE email = $1
     `;
@@ -36,7 +36,7 @@ export class RestaurantRepository {
 
   async findById(id: number): Promise<IRestaurant | null> {
     const text = `
-      SELECT id, name, slug, email, password, primary_color, theme_mode, logo_url, hero_image_url, hero_title, hero_subtitle, content_section_image, content_section_title, content_section_body, content_section_2_image, content_section_2_title, content_section_2_body, video_section_title, video_section_subtitle, video_poster_url, video_url, services_data, instagram_username, instagram_images, whatsapp_number, enable_pickup, enable_delivery, created_at, updated_at, features_config
+      SELECT id, name, slug, email, password, primary_color, theme_mode, menu_mode, menu_pdf_url, logo_url, hero_image_url, hero_title, hero_subtitle, content_section_image, content_section_title, content_section_body, content_section_2_image, content_section_2_title, content_section_2_body, video_section_title, video_section_subtitle, video_poster_url, video_url, services_data, instagram_username, instagram_images, whatsapp_number, enable_pickup, enable_delivery, created_at, updated_at, features_config
       FROM restaurants
       WHERE id = $1
     `;
@@ -76,7 +76,7 @@ export class RestaurantRepository {
       hero_title, hero_subtitle, content_section_image, content_section_title, content_section_body,
       content_section_2_image, content_section_2_title, content_section_2_body,
       video_section_title, video_section_subtitle, video_poster_url, video_url, services_data, instagram_username, instagram_images,
-      enable_pickup, enable_delivery, theme_mode
+      enable_pickup, enable_delivery, theme_mode, menu_mode, menu_pdf_url
     } = data;
 
     // Note: A nicer way is dynamically building the query, but for explicit control:
@@ -107,7 +107,9 @@ export class RestaurantRepository {
             enable_delivery = COALESCE($21, enable_delivery),
             updated_at = NOW(),
             features_config = COALESCE($22, features_config),
-            theme_mode = COALESCE($23, theme_mode)
+            theme_mode = COALESCE($23, theme_mode),
+            menu_mode = COALESCE($27, menu_mode),
+            menu_pdf_url = COALESCE($28, menu_pdf_url)
         WHERE id = $1
         RETURNING *;
     `, [
@@ -121,7 +123,8 @@ export class RestaurantRepository {
       enable_delivery,
       data.features_config ? JSON.stringify(data.features_config) : null,
       theme_mode,
-      content_section_2_image, content_section_2_title, content_section_2_body
+      content_section_2_image, content_section_2_title, content_section_2_body,
+      menu_mode, menu_pdf_url
     ]);
     return result[0];
   }

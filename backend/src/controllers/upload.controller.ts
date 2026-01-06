@@ -107,4 +107,30 @@ export class UploadController {
             throw new Error('ImageOptimizationError');
         }
     }
+
+    /**
+     * Sube un PDF de menú.
+     * Valida que sea PDF antes de subir.
+     */
+    uploadMenuPdf = async (req: Request, res: Response): Promise<void> => {
+        try {
+            if (!req.file) {
+                res.status(400).json({ error: 'No se ha enviado ningún archivo.' });
+                return;
+            }
+
+            // Strict MIME type validation
+            if (req.file.mimetype !== 'application/pdf') {
+                res.status(400).json({ error: 'Solo se permiten archivos PDF.' });
+                return;
+            }
+
+            const pdfUrl = await this.bunnyService.uploadPdf(req.file);
+            res.json({ url: pdfUrl });
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Error al subir el PDF' });
+        }
+    };
 }

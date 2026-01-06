@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "npx serve dist -s -l $PORT",
-    "start:prod": "npx serve dist -s -l $PORT"
+    "start": "serve -s dist -l 3000",
+    "start:prod": "serve -s dist -l 3000"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

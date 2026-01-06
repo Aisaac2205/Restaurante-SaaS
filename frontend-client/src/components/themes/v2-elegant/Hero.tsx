@@ -7,6 +7,8 @@ interface HeroProps {
     bgImage?: string | null;
     primaryColor: string;
     menuLink: string;
+    menuMode?: 'INTERACTIVE' | 'PDF';
+    menuPdfUrl?: string | null;
 }
 
 export const Hero: React.FC<HeroProps> = ({
@@ -15,7 +17,14 @@ export const Hero: React.FC<HeroProps> = ({
     bgImage,
     primaryColor,
     menuLink,
+    menuMode = 'INTERACTIVE',
+    menuPdfUrl,
 }) => {
+    // Determine button behavior based on menu mode
+    const menuButtonProps = menuMode === 'PDF' && menuPdfUrl
+        ? { href: menuPdfUrl, target: '_blank', rel: 'noopener noreferrer' }
+        : { href: menuLink };
+
     return (
         <div id="hero" className="relative min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-white text-stone-900 overflow-hidden">
             {/* Left Column: Content */}
@@ -46,7 +55,7 @@ export const Hero: React.FC<HeroProps> = ({
                     <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                         {/* Primary Button */}
                         <a
-                            href={menuLink}
+                            {...menuButtonProps}
                             className="inline-block w-full sm:w-auto min-w-[200px] px-10 py-4 bg-gray-900 text-white hover:bg-black transition-colors duration-300 text-sm font-bold tracking-widest uppercase text-center"
                         >
                             Ver Menú

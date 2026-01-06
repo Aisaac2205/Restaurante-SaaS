@@ -15,6 +15,8 @@ interface Props {
   restaurantPhone?: string | null;
   restaurantName?: string;
   restaurantId?: number;
+  // Menu Mode
+  menuMode?: 'INTERACTIVE' | 'PDF';
 }
 
 const {
@@ -27,6 +29,7 @@ const {
   restaurantPhone = "",
   restaurantName = "",
   restaurantId,
+  menuMode = 'INTERACTIVE',
 } = Astro.props;
 
 // Default theme color if none provided, though API should provide it
@@ -84,9 +87,9 @@ const customTransition = {
       <slot />
     </div>
 
-    <!-- Global Cart Islands -->
+    {/* Global Cart Islands - Only show in INTERACTIVE mode */}
     {
-      restaurantPhone && (
+      restaurantPhone && menuMode === 'INTERACTIVE' && (
         <div transition:persist>
           <CartButton client:only="react" />
           <CartDrawer

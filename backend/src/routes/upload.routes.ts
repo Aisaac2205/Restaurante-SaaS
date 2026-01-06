@@ -30,4 +30,11 @@ router.post('/restaurant', fileUploadMiddleware.single('image'), uploadControlle
  */
 router.post('/video', videoUploadMiddleware.single('video'), uploadController.uploadRestaurantVideo);
 
+/**
+ * POST /api/files/menu-pdf
+ * Sube un PDF de menú.
+ * Field name esperado en form-data: "pdf"
+ */
+router.post('/menu-pdf', fileUploadMiddleware.single('pdf'), uploadController.uploadMenuPdf);
+
 export default router;

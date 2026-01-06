@@ -6,9 +6,16 @@ interface LandingHeroProps {
     bgImage: string | null;
     primaryColor: string;
     menuLink: string;
+    menuMode?: 'INTERACTIVE' | 'PDF';
+    menuPdfUrl?: string | null;
 }
 
-export const LandingHero = ({ title, subtitle, bgImage, primaryColor, menuLink }: LandingHeroProps) => {
+export const LandingHero = ({ title, subtitle, bgImage, primaryColor, menuLink, menuMode = 'INTERACTIVE', menuPdfUrl }: LandingHeroProps) => {
+    // Determine button behavior based on menu mode
+    const menuButtonProps = menuMode === 'PDF' && menuPdfUrl
+        ? { href: menuPdfUrl, target: '_blank', rel: 'noopener noreferrer' }
+        : { href: menuLink };
+
     return (
         <div className="relative h-screen w-full flex items-center justify-start overflow-hidden">
             {/* Background Image with Overlay */}
@@ -53,10 +60,10 @@ export const LandingHero = ({ title, subtitle, bgImage, primaryColor, menuLink }
 
                     <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
                         <a
-                            href={menuLink}
+                            {...menuButtonProps}
                             className="bg-white text-black text-center font-bold py-4 px-8 rounded-none hover:bg-gray-100 transition-colors uppercase tracking-widest text-sm w-full md:w-auto min-w-[200px]"
                         >
-                            Ordenar En Línea
+                            {menuMode === 'PDF' ? 'Ver Menú PDF' : 'Ordenar En Línea'}
                         </a>
 
                         <a

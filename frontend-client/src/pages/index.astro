@@ -74,6 +74,7 @@ const themeMode = restaurant.theme_mode || "v1-urban";
 	enablePickup={restaurant.enable_pickup}
 	enableDelivery={restaurant.enable_delivery}
 	restaurantId={restaurant.id}
+	menuMode={restaurant.menu_mode || "INTERACTIVE"}
 >
 	{/* HEADER FIJO */}
 	{
@@ -110,6 +111,8 @@ const themeMode = restaurant.theme_mode || "v1-urban";
 							bgImage={restaurant.hero_image_url}
 							primaryColor={restaurant.primary_color}
 							menuLink={menuLink}
+							menuMode={restaurant.menu_mode || "INTERACTIVE"}
+							menuPdfUrl={restaurant.menu_pdf_url}
 						/>
 					</div>
 
@@ -189,6 +192,8 @@ const themeMode = restaurant.theme_mode || "v1-urban";
 						bgImage={restaurant.hero_image_url ?? undefined}
 						primaryColor={restaurant.primary_color}
 						menuLink={menuLink}
+						menuMode={restaurant.menu_mode || "INTERACTIVE"}
+						menuPdfUrl={restaurant.menu_pdf_url}
 					/>
 
 					{/* About / Content */}

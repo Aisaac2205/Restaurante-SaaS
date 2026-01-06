@@ -13,6 +13,7 @@ export interface UseRestaurantFormReturn {
     saveSettings: (data: RestaurantSettingsForm) => Promise<boolean>;
     uploadImage: (file: File) => Promise<string>;
     uploadVideo: (file: File) => Promise<string>;
+    uploadPdf: (file: File) => Promise<string>;
     reload: () => Promise<void>;
 }
 
@@ -66,7 +67,9 @@ export const useRestaurantForm = (restaurantId?: number | null): UseRestaurantFo
                 instagram_images_text: (data.instagram_images || []).join('\n'),
                 enable_pickup: data.enable_pickup ?? true,
                 enable_delivery: data.enable_delivery ?? false,
-                features_config: data.features_config || {}
+                features_config: data.features_config || {},
+                menu_mode: data.menu_mode || 'INTERACTIVE',
+                menu_pdf_url: data.menu_pdf_url || ''
             });
         } catch (error) {
             console.error('Error loading restaurant data:', error);
@@ -127,6 +130,16 @@ export const useRestaurantForm = (restaurantId?: number | null): UseRestaurantFo
         return res.data.url;
     };
 
+    const uploadPdf = async (file: File): Promise<string> => {
+        const formData = new FormData();
+        formData.append('pdf', file);
+
+        const res = await api.post<{ url: string }>('/files/menu-pdf', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return res.data.url;
+    };
+
     return {
         form,
         loading,
@@ -134,6 +147,7 @@ export const useRestaurantForm = (restaurantId?: number | null): UseRestaurantFo
         saveSettings,
         uploadImage,
         uploadVideo,
+        uploadPdf,
         reload: loadData
     };
 };

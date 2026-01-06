@@ -12,6 +12,10 @@ export const restaurantSettingsSchema = z.object({
     logo_url: z.string().url().optional().or(z.literal('')),
     theme_mode: z.string().default('v1-urban'),
 
+    // Menu Mode
+    menu_mode: z.enum(['INTERACTIVE', 'PDF']).default('INTERACTIVE'),
+    menu_pdf_url: z.string().url().optional().or(z.literal('')),
+
     // Landing Hero
     hero_image_url: z.string().url().optional().or(z.literal('')),
     hero_title: z.string().optional(),

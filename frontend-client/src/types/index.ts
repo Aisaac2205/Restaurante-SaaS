@@ -26,6 +26,8 @@ export interface Restaurant {
     enable_delivery?: boolean;
     features_config?: Record<string, boolean>;
     theme_mode?: string;
+    menu_mode?: 'INTERACTIVE' | 'PDF';
+    menu_pdf_url?: string | null;
 }
 
 // Product (from API)

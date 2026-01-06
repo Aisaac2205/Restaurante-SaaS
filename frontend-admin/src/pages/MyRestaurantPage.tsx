@@ -6,6 +6,7 @@ import { ContentSectionForm } from '../features/restaurant/components/ContentSec
 import { ServicesForm } from '../features/restaurant/components/ServicesForm';
 import { VideoSectionForm } from '../features/restaurant/components/VideoSectionForm';
 import { SocialForm } from '../features/restaurant/components/SocialForm';
+import { MenuModeForm } from '../features/restaurant/components/MenuModeForm';
 import clsx from 'clsx';
 import {
     Fingerprint,
@@ -14,13 +15,14 @@ import {
     Sparkles,
     Film,
     Share2,
+    FileText,
     Save,
     Loader2
 } from 'lucide-react';
 
 export const MyRestaurantPage = () => {
-    const { form, loading, saving, saveSettings, uploadImage } = useRestaurantForm();
-    const [activeSection, setActiveSection] = useState<'identity' | 'hero' | 'story' | 'services' | 'video' | 'social'>('identity');
+    const { form, loading, saving, saveSettings, uploadImage, uploadPdf } = useRestaurantForm();
+    const [activeSection, setActiveSection] = useState<'identity' | 'hero' | 'story' | 'services' | 'video' | 'social' | 'menu'>('identity');
 
     if (loading) return (
         <div className="flex items-center justify-center p-12">
@@ -35,6 +37,7 @@ export const MyRestaurantPage = () => {
         { id: 'services', label: 'Servicios', icon: Sparkles, desc: 'Tus Diferenciadores' },
         { id: 'video', label: 'Video', icon: Film, desc: 'Video Promocional' },
         { id: 'social', label: 'Redes', icon: Share2, desc: 'Instagram y Links' },
+        { id: 'menu', label: 'Modo Menú', icon: FileText, desc: 'Interactivo o PDF' },
     ] as const;
 
     return (
@@ -127,6 +130,7 @@ export const MyRestaurantPage = () => {
                     {activeSection === 'services' && <ServicesForm form={form} onUpload={uploadImage} loading={saving} />}
                     {activeSection === 'video' && <VideoSectionForm form={form} onUpload={uploadImage} loading={saving} />}
                     {activeSection === 'social' && <SocialForm form={form} onUpload={uploadImage} />}
+                    {activeSection === 'menu' && <MenuModeForm form={form} uploadPdf={uploadPdf} />}
                 </div>
             </main>
 

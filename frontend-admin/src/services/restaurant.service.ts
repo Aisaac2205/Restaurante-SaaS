@@ -33,6 +33,8 @@ export interface RestaurantSettings {
     enable_pickup: boolean;
     enable_delivery: boolean;
     features_config?: Record<string, boolean>;
+    menu_mode: 'INTERACTIVE' | 'PDF';
+    menu_pdf_url: string | null;
 }
 
 export const RestaurantService = {

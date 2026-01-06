@@ -8,6 +8,8 @@ export interface IRestaurant {
     password: string; // Hashed
     primary_color: string;
     theme_mode: string; // 'v1-urban' | 'v2-elegant'
+    menu_mode: 'INTERACTIVE' | 'PDF';
+    menu_pdf_url: string | null;
     logo_url: string | null;
     hero_image_url: string | null;
     hero_title: string | null;
@@ -149,6 +151,8 @@ export interface IPublicMenu {
         enable_delivery: boolean;
         features_config?: Record<string, boolean>;
         theme_mode: string;
+        menu_mode: string;
+        menu_pdf_url: string | null;
     };
     categories: ICategoryResponse[];
 }

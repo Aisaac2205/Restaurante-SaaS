@@ -77,7 +77,9 @@ export class MenuService {
                 enable_pickup: restaurant.enable_pickup,
                 enable_delivery: restaurant.enable_delivery,
                 features_config: restaurant.features_config,
-                theme_mode: restaurant.theme_mode || 'v1-urban'
+                theme_mode: restaurant.theme_mode || 'v1-urban',
+                menu_mode: restaurant.menu_mode || 'INTERACTIVE',
+                menu_pdf_url: restaurant.menu_pdf_url
             },
             categories: categoriesResponse
         };
