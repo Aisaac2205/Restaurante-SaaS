@@ -1,9 +1,4 @@
 import { motion } from 'framer-motion';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation } from 'swiper/modules';
-
-import 'swiper/css';
-import 'swiper/css/navigation';
 
 interface ServiceItem {
     title: string;
@@ -13,77 +8,62 @@ interface ServiceItem {
 
 interface ServicesSectionProps {
     services: ServiceItem[];
+    restaurantPhone?: string | null;
 }
 
-export const ServicesSection = ({ services }: ServicesSectionProps) => {
-    if (!services || services.length === 0) return null;
+export const ServicesSection = ({ services, restaurantPhone }: ServicesSectionProps) => {
+    // We only use the first service item for the "Eventos y Reservas" section
+    const service = services?.[0];
+
+    if (!service) return null;
+
+    const handleReservationClick = () => {
+        if (!restaurantPhone) return;
+        const phone = restaurantPhone.replace(/\D/g, '');
+        const message = encodeURIComponent(`Hola, me gustaría obtener información sobre eventos y reservas en el restaurante.`);
+        window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+    };
 
     return (
-        <section className="py-24 bg-gray-50 overflow-hidden">
-            <div className="container mx-auto px-4">
-                <div className="flex flex-col md:flex-row items-end justify-between mb-16">
-                    <div>
-                        <div className="w-12 h-1 bg-black mb-6" />
-                        <h2 className="text-4xl font-serif font-bold">Ofrecemos servicios únicos</h2>
-                    </div>
-                    <div className="mt-4 md:mt-0 flex items-center gap-4">
-                        {/* Custom Navigation Buttons can go here if needed, or keeping the button */}
-                        <button className="bg-black text-white px-8 py-3 uppercase tracking-widest text-xs hover:bg-gray-800 transition-colors">
-                            Explorar Servicios
-                        </button>
-                    </div>
-                </div>
+        <section className="relative py-32 md:py-48 bg-stone-900 overflow-hidden">
+            {/* Background Image with Overlay */}
+            <div className="absolute inset-0 z-0">
+                {service.image_url ? (
+                    <img
+                        src={service.image_url}
+                        alt={service.title}
+                        className="w-full h-full object-cover opacity-60"
+                    />
+                ) : (
+                    <div className="w-full h-full bg-stone-800" />
+                )}
+                <div className="absolute inset-0 bg-black/40" />
+            </div>
 
-                <div className="-mx-4 md:mx-0">
-                    <Swiper
-                        modules={[Autoplay, Navigation]}
-                        spaceBetween={30}
-                        slidesPerView={1}
-                        loop={true}
-                        speed={1000}
-                        autoplay={{
-                            delay: 3500,
-                            disableOnInteraction: false,
-                        }}
-                        breakpoints={{
-                            640: {
-                                slidesPerView: 2,
-                            },
-                            1024: {
-                                slidesPerView: 3,
-                            },
-                        }}
-                        className="service-swiper !pb-12"
-                    >
-                        {services.map((service, index) => (
-                            <SwiperSlide key={index} className="h-auto">
-                                <motion.div
-                                    initial={{ opacity: 0, y: 30 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.1 }}
-                                    viewport={{ once: true }}
-                                    className="bg-white group cursor-pointer h-full flex flex-col"
-                                >
-                                    <div className="overflow-hidden h-72 relative">
-                                        <img
-                                            src={service.image_url}
-                                            alt={service.title}
-                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                        />
-                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-                                    </div>
-                                    <div className="p-8 text-center bg-white relative -mt-8 mx-4 shadow-lg flex-grow flex flex-col items-center">
-                                        <h3 className="text-xl font-bold mb-3 font-serif">{service.title}</h3>
-                                        <p className="text-gray-500 text-sm leading-relaxed mb-6">
-                                            {service.description}
-                                        </p>
-                                        <div className="w-8 h-0.5 bg-black mx-auto mt-auto" />
-                                    </div>
-                                </motion.div>
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                </div>
+            <div className="container mx-auto px-6 relative z-10 text-center">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                    viewport={{ once: true }}
+                    className="max-w-4xl mx-auto"
+                >
+                    <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mb-6 tracking-wider uppercase">
+                        {service.title}
+                    </h2>
+                    <p className="text-lg md:text-xl text-stone-200 mb-12 leading-relaxed max-w-2xl mx-auto font-light">
+                        {service.description}
+                    </p>
+
+                    {restaurantPhone && (
+                        <button
+                            onClick={handleReservationClick}
+                            className="inline-block border-2 border-white text-white px-10 py-4 text-sm font-bold tracking-[0.2em] uppercase hover:bg-white hover:text-stone-900 transition-all duration-300"
+                        >
+                            Reservas
+                        </button>
+                    )}
+                </motion.div>
             </div>
         </section>
     );

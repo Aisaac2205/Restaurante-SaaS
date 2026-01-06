@@ -136,6 +136,7 @@ const themeMode = restaurant.theme_mode || "v1-urban";
 						<ServicesV1
 							client:visible
 							services={restaurant.services_data}
+							restaurantPhone={restaurant.whatsapp_number}
 						/>
 					</div>
 
@@ -212,6 +213,7 @@ const themeMode = restaurant.theme_mode || "v1-urban";
 					<ServicesV2
 						client:visible
 						services={restaurant.services_data}
+						restaurantPhone={restaurant.whatsapp_number}
 					/>
 
 					{/* Menu Preview / Featured */}

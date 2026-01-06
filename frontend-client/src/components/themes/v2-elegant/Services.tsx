@@ -9,74 +9,72 @@ interface ServiceItem {
 interface ServicesSectionProps {
     services: ServiceItem[];
     title?: string | null;
-    subtitle?: string | null;
+    subtitle?: string | null; // Keeping these for compatibility, though we prioritize the service data
+    restaurantPhone?: string | null;
 }
 
-export const ServicesSection = ({ services, title, subtitle }: ServicesSectionProps) => {
-    if (!services || services.length === 0) return null;
+export const ServicesSection = ({ services, restaurantPhone }: ServicesSectionProps) => {
+    // We only use the first service item for the "Eventos y Reservas" section
+    const service = services?.[0];
+
+    if (!service) return null;
+
+    const handleReservationClick = () => {
+        if (!restaurantPhone) return;
+        const phone = restaurantPhone.replace(/\D/g, '');
+        const message = encodeURIComponent(`Hola, me gustaría obtener información sobre eventos y reservas en el restaurante.`);
+        window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+    };
 
     return (
-        <section id="services" className="py-16 md:py-32 bg-white text-stone-900 relative overflow-hidden">
-            <div className="container mx-auto px-6 max-w-7xl relative z-10">
-                <div className="flex flex-col md:flex-row items-end justify-between mb-20">
-                    <div className="max-w-2xl">
-                        <span className="block text-xs uppercase tracking-[0.2em] mb-6 text-stone-500 font-medium">
-                            {subtitle || "Nuestras Experiencias"}
-                        </span>
-                        <h2 className="text-5xl md:text-6xl font-serif font-light leading-tight text-stone-900">
-                            {title ? (
-                                title
-                            ) : (
-                                <>
-                                    Servicios diseñados <br />
-                                    <span className="italic text-stone-600">para la excelencia.</span>
-                                </>
-                            )}
-                        </h2>
-                    </div>
-                </div>
+        <section id="services" className="relative py-32 md:py-48 bg-white text-stone-900 overflow-hidden">
+            {/* Background Image with Parallax-like effect */}
+            <div className="absolute inset-0 z-0">
+                {service.image_url ? (
+                    <img
+                        src={service.image_url}
+                        alt={service.title}
+                        className="w-full h-full object-cover scale-105"
+                    />
+                ) : (
+                    <div className="w-full h-full bg-stone-200" />
+                )}
+                {/* Elegante gradient overlay */}
+                <div className="absolute inset-0 bg-black/30" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {services.map((service, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.15, duration: 0.8, ease: "easeOut" }}
-                            viewport={{ once: true, margin: "-100px" }}
-                            className="group relative h-[500px] flex flex-col justify-end overflow-hidden bg-stone-100 cursor-pointer"
+            <div className="container mx-auto px-6 max-w-7xl relative z-10 flex flex-col items-center text-center">
+                <motion.div
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    viewport={{ once: true }}
+                    className="max-w-3xl"
+                >
+                    <span className="block text-xs md:text-sm uppercase tracking-[0.3em] mb-6 text-white/80 font-medium">
+                        Experiencias Exclusivas
+                    </span>
+
+                    <h2 className="text-5xl md:text-7xl font-serif font-light leading-tight text-white mb-8 italic">
+                        {service.title}
+                    </h2>
+
+                    <div className="w-24 h-[1px] bg-white/60 mx-auto mb-10" />
+
+                    <p className="text-lg md:text-xl text-stone-100 font-light leading-relaxed mb-12 max-w-2xl mx-auto">
+                        {service.description}
+                    </p>
+
+                    {restaurantPhone && (
+                        <button
+                            onClick={handleReservationClick}
+                            className="bg-white text-stone-900 px-12 py-4 text-xs md:text-sm font-bold tracking-[0.25em] uppercase hover:bg-stone-200 transition-colors duration-300 shadow-xl"
                         >
-                            {/* Image Background */}
-                            <img
-                                src={service.image_url}
-                                alt={service.title}
-                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] ease-in-out group-hover:scale-110 opacity-90 group-hover:opacity-100"
-                            />
-
-                            {/* Overlay Gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-
-                            {/* Content */}
-                            <div className="relative z-10 p-8 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                                <div className="w-12 h-[1px] bg-white/60 mb-6 group-hover:w-20 transition-all duration-500" />
-
-                                <h3 className="text-3xl font-serif text-white mb-3 italic">
-                                    {service.title}
-                                </h3>
-
-                                <p className="text-stone-200 font-light text-sm leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 transform translate-y-4 group-hover:translate-y-0">
-                                    {service.description}
-                                </p>
-
-                                <div className="mt-6">
-                                    <span className="text-white text-[10px] uppercase tracking-[0.2em] border-b border-white/40 pb-1 group-hover:border-white transition-colors">
-                                        Descubrir
-                                    </span>
-                                </div>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+                            Reservar Ahora
+                        </button>
+                    )}
+                </motion.div>
             </div>
         </section>
     );

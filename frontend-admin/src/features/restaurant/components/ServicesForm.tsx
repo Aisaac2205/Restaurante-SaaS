@@ -1,4 +1,5 @@
-import { Plus, Trash2, GripVertical, Image as ImageIcon } from 'lucide-react';
+import { useEffect } from 'react';
+import { Image as ImageIcon } from 'lucide-react';
 import { useFieldArray } from 'react-hook-form';
 import type { RestaurantFormType } from '../types';
 
@@ -11,115 +12,105 @@ interface Props {
 export const ServicesForm = ({ form, onUpload }: Props) => {
     const { control, register, setValue, watch } = form;
 
-    const { fields, append, remove } = useFieldArray({
+    const { fields, append } = useFieldArray({
         control,
         name: "services_data"
     });
 
-    const handleServiceImageUpload = async (file: File, index: number) => {
+    // Ensure there is always at least one service item
+    useEffect(() => {
+        if (fields.length === 0) {
+            append({
+                title: 'Eventos y Reservas',
+                description: 'Ambientes exclusivos para disfrutar con la mejor compañía.',
+                image_url: ''
+            });
+        }
+    }, [fields.length, append]);
+
+    const handleServiceImageUpload = async (file: File) => {
         try {
             const url = await onUpload(file);
-            setValue(`services_data.${index}.image_url`, url, { shouldDirty: true });
+            setValue(`services_data.0.image_url`, url, { shouldDirty: true });
         } catch {
             alert('Error al subir imagen de servicio');
         }
     };
 
+    // Watch values for the first item directly
+    const imageUrl = watch(`services_data.0.image_url`);
+
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             <div className="flex flex-col gap-1">
-                <h2 className="text-xl font-semibold text-gray-900">Nuestros Servicios</h2>
-                <p className="text-sm text-gray-500">Destaca qué hace especial a tu restaurante (Ej. Delivery rápido, Wi-Fi gratis).</p>
+                <h2 className="text-xl font-semibold text-gray-900">Eventos y Reservas</h2>
+                <p className="text-sm text-gray-500">
+                    Configura la sección de eventos y reservas. Esta será la imagen principal que verán tus clientes.
+                </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {fields.map((field, index) => {
-                    const imageUrl = watch(`services_data.${index}.image_url`);
+            <div className="max-w-4xl">
+                <div className="group relative bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col md:flex-row">
 
-                    return (
-                        <div key={field.id} className="group relative bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
-                            {/* Controls Overlay */}
-                            <div className="absolute top-2 right-2 z-20 flex gap-2">
-                                <button
-                                    type="button"
-                                    onClick={() => remove(index)}
-                                    className="p-2 bg-white/90 backdrop-blur-sm text-red-500 hover:text-red-600 hover:bg-white rounded-full shadow-sm transition-all border border-gray-100 opacity-100 md:opacity-0 group-hover:opacity-100"
-                                    title="Eliminar servicio"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                </button>
+                    {/* Image Section */}
+                    <div className="relative w-full md:w-2/5 h-64 md:h-auto bg-gray-100 border-b md:border-b-0 md:border-r border-gray-100 group/image cursor-pointer">
+                        {imageUrl ? (
+                            <img
+                                src={imageUrl}
+                                alt="Start preview"
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover/image:scale-105"
+                            />
+                        ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 gap-2">
+                                <ImageIcon className="w-8 h-8 opacity-50" />
+                                <span className="text-xs font-medium">Subir Imagen de Fondo</span>
                             </div>
+                        )}
 
-                            <div className="absolute top-2 left-2 z-20 cursor-move opacity-50 hover:opacity-100 transition-opacity p-1.5 bg-black/20 backdrop-blur-sm rounded-md text-white">
-                                <GripVertical className="w-4 h-4" />
-                            </div>
-
-                            {/* Image Header */}
-                            <div className="relative w-full h-48 bg-gray-100 border-b border-gray-100 group/image cursor-pointer">
-                                {imageUrl ? (
-                                    <img
-                                        src={imageUrl}
-                                        alt="Service preview"
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover/image:scale-105"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 gap-2">
-                                        <ImageIcon className="w-8 h-8 opacity-50" />
-                                        <span className="text-xs font-medium">Subir Imagen</span>
-                                    </div>
-                                )}
-
-                                {/* Upload Overlay */}
-                                <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/10 transition-colors flex items-center justify-center">
-                                    <div className="bg-black/70 text-white px-3 py-1.5 rounded-full text-xs font-medium opacity-0 group-hover/image:opacity-100 transition-all transform translate-y-2 group-hover/image:translate-y-0">
-                                        {imageUrl ? 'Cambiar Imagen' : 'Seleccionar Imagen'}
-                                    </div>
-                                </div>
-
-                                <input
-                                    type="file"
-                                    className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                                    accept="image/*"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) handleServiceImageUpload(file, index);
-                                    }}
-                                />
-                            </div>
-
-                            {/* Content Inputs */}
-                            <div className="p-4 space-y-4 flex-1 flex flex-col">
-                                <div>
-                                    <input
-                                        {...register(`services_data.${index}.title`)}
-                                        placeholder="Título del servicio"
-                                        className="w-full px-0 py-1 bg-transparent border-0 border-b border-transparent focus:border-black focus:ring-0 text-lg font-bold placeholder:text-gray-300 transition-colors"
-                                    />
-                                </div>
-                                <div className="flex-1">
-                                    <textarea
-                                        {...register(`services_data.${index}.description`)}
-                                        placeholder="Describe brevemente este servicio para tus clientes..."
-                                        rows={3}
-                                        className="w-full px-3 py-2 bg-gray-50 border border-gray-100 rounded-lg focus:ring-1 focus:ring-black focus:border-black text-sm text-gray-600 resize-none transition-all"
-                                    />
-                                </div>
+                        {/* Upload Overlay */}
+                        <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/10 transition-colors flex items-center justify-center">
+                            <div className="bg-black/70 text-white px-3 py-1.5 rounded-full text-xs font-medium opacity-0 group-hover/image:opacity-100 transition-all transform translate-y-2 group-hover/image:translate-y-0">
+                                {imageUrl ? 'Cambiar Imagen' : 'Seleccionar Imagen'}
                             </div>
                         </div>
-                    );
-                })}
 
-                {/* Empty State / Add Button styled as card */}
-                <button
-                    type="button"
-                    onClick={() => append({ title: '', description: '', image_url: '' })}
-                    className="flex flex-col items-center justify-center h-full min-h-[300px] border-2 border-dashed border-gray-200 rounded-xl hover:border-gray-400 hover:bg-gray-50/50 transition-all group"
-                >
-                    <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3 group-hover:bg-black group-hover:text-white transition-colors">
-                        <Plus className="w-6 h-6" />
+                        <input
+                            type="file"
+                            className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                            accept="image/*"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleServiceImageUpload(file);
+                            }}
+                        />
                     </div>
-                    <span className="text-sm font-medium text-gray-500 group-hover:text-gray-900">Agregar Nuevo Servicio</span>
-                </button>
+
+                    {/* Content Inputs */}
+                    <div className="p-6 space-y-6 flex-1 flex flex-col justify-center">
+                        <div>
+                            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Título</label>
+                            <input
+                                {...register(`services_data.0.title`)}
+                                placeholder="Ej. Eventos y Reservas"
+                                className="w-full px-0 py-1 bg-transparent border-0 border-b border-gray-200 focus:border-black focus:ring-0 text-xl font-bold placeholder:text-gray-300 transition-colors"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Descripción</label>
+                            <textarea
+                                {...register(`services_data.0.description`)}
+                                placeholder="Describe brevemente la experiencia..."
+                                rows={4}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-lg focus:ring-1 focus:ring-black focus:border-black text-sm text-gray-600 resize-none transition-all"
+                            />
+                        </div>
+                        <div className="pt-2">
+                            <div className="text-xs text-gray-400 border-l-2 border-gray-200 pl-3 italic">
+                                El botón de acción redirigirá automáticamente al WhatsApp configurado del restaurante preguntando por reservas.
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
