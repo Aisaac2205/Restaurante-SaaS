@@ -57,25 +57,26 @@ export const MenuModeForm = ({ form, uploadPdf }: Props) => {
             </div>
 
             {/* Mode Toggle */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* Mode Toggle */}
+            <div className="grid grid-cols-2 gap-3">
                 <button
                     type="button"
                     onClick={() => handleModeChange('INTERACTIVE')}
-                    className={`p-4 rounded-xl border-2 transition-all text-left ${menuMode === 'INTERACTIVE'
+                    className={`p-3 md:p-4 rounded-xl border-2 transition-all text-left flex flex-col h-full ${menuMode === 'INTERACTIVE'
                         ? 'border-black bg-gray-50'
                         : 'border-gray-200 hover:border-gray-300'
                         }`}
                 >
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${menuMode === 'INTERACTIVE' ? 'border-black' : 'border-gray-300'
+                    <div className="flex items-start gap-2 mb-1">
+                        <div className={`mt-0.5 w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${menuMode === 'INTERACTIVE' ? 'border-black' : 'border-gray-300'
                             }`}>
                             {menuMode === 'INTERACTIVE' && (
                                 <div className="w-2 h-2 rounded-full bg-black" />
                             )}
                         </div>
-                        <span className="font-semibold">Menú Interactivo</span>
+                        <span className="font-semibold text-sm md:text-base leading-tight">Menú Interactivo</span>
                     </div>
-                    <p className="text-sm text-gray-500 ml-7">
+                    <p className="text-xs md:text-sm text-gray-500 pl-6 leading-normal">
                         Los clientes navegan el menú digital y pueden agregar productos al carrito.
                     </p>
                 </button>
@@ -83,21 +84,21 @@ export const MenuModeForm = ({ form, uploadPdf }: Props) => {
                 <button
                     type="button"
                     onClick={() => handleModeChange('PDF')}
-                    className={`p-4 rounded-xl border-2 transition-all text-left ${menuMode === 'PDF'
+                    className={`p-3 md:p-4 rounded-xl border-2 transition-all text-left flex flex-col h-full ${menuMode === 'PDF'
                         ? 'border-black bg-gray-50'
                         : 'border-gray-200 hover:border-gray-300'
                         }`}
                 >
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${menuMode === 'PDF' ? 'border-black' : 'border-gray-300'
+                    <div className="flex items-start gap-2 mb-1">
+                        <div className={`mt-0.5 w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${menuMode === 'PDF' ? 'border-black' : 'border-gray-300'
                             }`}>
                             {menuMode === 'PDF' && (
                                 <div className="w-2 h-2 rounded-full bg-black" />
                             )}
                         </div>
-                        <span className="font-semibold">Menú PDF</span>
+                        <span className="font-semibold text-sm md:text-base leading-tight">Menú PDF</span>
                     </div>
-                    <p className="text-sm text-gray-500 ml-7">
+                    <p className="text-xs md:text-sm text-gray-500 pl-6 leading-normal">
                         Los clientes ven tu menú en PDF. Sin carrito de compras.
                     </p>
                 </button>
