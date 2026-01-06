@@ -1,5 +1,8 @@
 {
     "name": "monorepo-root",
     "private": true,
-    "packageManager": "pnpm@9.0.0"
+    "packageManager": "pnpm@9.0.0",
+    "scripts": {
+        "build": "pnpm -r run build"
+    }
 }
