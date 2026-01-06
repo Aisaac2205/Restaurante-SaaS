@@ -1,0 +1,27 @@
+# --- DEPENDENCIAS  ---
+node_modules/
+pnpm-lock.yaml   # Opcional: A veces se ignora, pero Railway lo usa si lo subes. Yo recomiendo NO ignorarlo.
+npm-debug.log
+yarn-error.log
+
+# --- MEDIO AMBIENTE  ---
+.env
+.env.local
+.env.*.local
+*.env
+
+# --- CARPETAS DE BUILD  ---
+dist/
+build/
+out/
+.astro/          # Específico de Astro
+.next/           # Por si usas Next algún día
+
+# --- SISTEMA OPERATIVO ---
+.DS_Store
+Thumbs.db
+
+# --- OTROS ---
+coverage/
+.vscode/
+.idea/
