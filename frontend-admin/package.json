@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "vite preview --host",
-    "start:prod": "vite preview --host"
+    "start": "serve dist -s -l $PORT",
+    "start:prod": "serve dist -s -l $PORT"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -31,7 +31,8 @@
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.3",
     "vite": "^7.2.4",
-    "vite-plugin-pwa": "^1.2.0"
+    "vite-plugin-pwa": "^1.2.0",
+    "serve": "^14.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
