@@ -1,108 +1,108 @@
-# Restaurant Multi-Tenant SaaS Platform
+# Plataforma SaaS Multi-Tenant para Restaurantes
 
-## 1. Executive Summary
+## 1. Resumen Ejecutivo
 
-This project represents a comprehensive "Software as a Service" (SaaS) solution designed to automate the deployment and management of digital restaurant presence. The system employs a multi-tenant architecture, allowing a single deployment instance to serve multiple distinct restaurant brands with data isolation and unique visual branding.
+Este proyecto representa una solución integral de "Software as a Service" (SaaS) diseñada para automatizar el despliegue y la gestión de la presencia digital de restaurantes. El sistema emplea una arquitectura multi-tenant, permitiendo que una única instancia de despliegue sirva a múltiples marcas de restaurantes distintas con aislamiento de datos y marca visual única.
 
-The platform is engineered for high performance, Search Engine Optimization (SEO), and ease of management, separated into three distinct application layers: Public Client, Administrative Panel, and Backend API.
+La plataforma está diseñada para alto rendimiento, Optimización de Motores de Búsqueda (SEO) y facilidad de gestión, separada en tres capas de aplicación distintas: Cliente Público, Panel Administrativo y API Backend.
 
-## 2. System Architecture
+## 2. Arquitectura del Sistema
 
-The following diagram illustrates the high-level container architecture of the system, demonstrating the data flow between the end-users, the application frontends, and the centralized backend services.
+El siguiente diagrama ilustra la arquitectura de contenedores de alto nivel del sistema, demostrando el flujo de datos entre los usuarios finales, los frontends de la aplicación y los servicios backend centralizados.
 
 ```mermaid
 graph TD
-    subgraph "External Users"
-        Client[End Customer]
-        AdminUser[Restaurant Owner/Manager]
+    subgraph "Usuarios Externos"
+        Client[Cliente Final]
+        AdminUser[Dueño/Gerente]
     end
 
-    subgraph "Presentation Layer"
-        ClientApp[Frontend Client]
-        AdminApp[Frontend Admin]
+    subgraph "Capa de Presentación"
+        ClientApp[Cliente Frontend]
+        AdminApp[Admin Frontend]
     end
 
-    subgraph "Service Layer"
-        API[Backend API Core]
+    subgraph "Capa de Servicio"
+        API[Core API Backend]
     end
 
-    subgraph "Data Layer"
-        DB[(PostgreSQL Database)]
-        Storage[Image Storage / CDN]
+    subgraph "Capa de Datos"
+        DB[(Base de Datos PostgreSQL)]
+        Storage[Almacenamiento / CDN]
     end
 
-    Client -->|HTTPS / Browsing| ClientApp
-    AdminUser -->|HTTPS / Management| AdminApp
+    Client -->|HTTPS / Navegación| ClientApp
+    AdminUser -->|HTTPS / Gestión| AdminApp
     
-    ClientApp -->|Server-Side Fetching (SSR)| API
-    ClientApp -->|Client-Side Hydration| API
-    AdminApp -->|Secure REST API Requests| API
+    ClientApp -->|"Server-Side Fetching (SSR)"| API
+    ClientApp -->|Hidratación Cliente| API
+    AdminApp -->|Peticiones REST API Seguras| API
     
-    API -->|Read/Write Operations| DB
-    API -->|Asset Management| Storage
+    API -->|Lectura/Escritura| DB
+    API -->|Gestión de Activos| Storage
 ```
 
-## 3. Technology Stack Overview
+## 3. Resumen del Stack Tecnológico
 
-### Public Client (Storefront)
-*   **Framework**: Astro v5 (Server-Side Rendering) for optimal First Contentful Paint (FCP) and SEO.
-*   **Interactivity**: React 19 Islands architecture for dynamic components (Shopping Cart, Filters).
-*   **Styling**: Tailwind CSS v4 for utility-first design systems.
-*   **State Management**: Nanostores for lightweight, framework-agnostic state sharing.
+### Cliente Público (Storefront)
+*   **Framework**: Astro v5 (Server-Side Rendering) para Pintado de Contenido Inicial (FCP) y SEO óptimos.
+*   **Interactividad**: Arquitectura de Islas React 19 para componentes dinámicos (Carrito de Compras, Filtros).
+*   **Estilos**: Tailwind CSS v4 para sistemas de diseño utility-first.
+*   **Gestión de Estado**: Nanostores para compartir estado de manera ligera y agnóstica del framework.
 
-### Admin Panel (Dashboard)
-*   **Framework**: React 19 (SPA) powered by Vite.
-*   **UI/UX**: Custom design system built on Tailwind CSS.
-*   **Forms**: React Hook Form linked with Zod for rigorous schema validation.
-*   **Routing**: React Router v7.
+### Panel Administrativo (Dashboard)
+*   **Framework**: React 19 (SPA) impulsado por Vite.
+*   **UI/UX**: Sistema de diseño personalizado construido sobre Tailwind CSS.
+*   **Formularios**: React Hook Form vinculado con Zod para validación rigurosa de esquemas.
+*   **Enrutamiento**: React Router v7.
 
-### Backend API
+### API Backend
 *   **Runtime**: Node.js.
-*   **Framework**: Express.js with a strict Modular Monolith patterns.
-*   **Language**: TypeScript for type safety across the entire stack.
-*   **Database**: PostgreSQL using raw SQL (pg driver) within a Repository pattern for maximum query optimization and control.
-*   **Security**: JWT for stateless authentication using RSA/Bcrypt standards.
+*   **Framework**: Express.js con patrones estrictos de Monolito Modular.
+*   **Lenguaje**: TypeScript para seguridad de tipos en todo el stack.
+*   **Base de Datos**: PostgreSQL usando SQL puro (driver pg) dentro de un patrón Repositorio para máxima optimización y control de consultas.
+*   **Seguridad**: JWT para autenticación sin estado usando estándares RSA/Bcrypt.
 
-## 4. Development Environment Setup
+## 4. Configuración del Entorno de Desarrollo
 
-To orchestrate the full development environment, distinct services must be initialized. It is recommended to run each service in a separate terminal context.
+Para orquestar el entorno de desarrollo completo, se deben inicializar distintos servicios. Se recomienda ejecutar cada servicio en un contexto de terminal separado.
 
-### Prerequisites
-*   Node.js v18 LTS or higher.
-*   PostgreSQL 14 or higher (Local or Containerized).
-*   Git for version control.
+### Prerrequisitos
+*   Node.js v18 LTS o superior.
+*   PostgreSQL 14 o superior (Local o Dockerizado).
+*   Git para control de versiones.
 
-### Initialization Sequence
+### Secuencia de Inicialización
 
-1.  **Database Initialization**
-    Ensure PostgreSQL is running and the schema has been migrated using the scripts provided in the `backend/src/scripts` directory.
+1.  **Inicialización de Base de Datos**
+    Asegúrese de que PostgreSQL esté corriendo y el esquema haya sido migrado usando los scripts proporcionados en el directorio `backend/src/scripts`.
 
-2.  **Backend Service**
+2.  **Servicio Backend**
     ```bash
     cd backend
     npm install
     npm run dev
-    # Service listens on Port 3000
+    # El servicio escucha en el Puerto 3000
     ```
 
-3.  **Frontend Administration**
+3.  **Frontend Administrativo**
     ```bash
     cd frontend-admin
     npm install
     npm run dev
-    # Service listens on Port 5173
+    # El servicio escucha en el Puerto 5173
     ```
 
-4.  **Frontend Client (Public)**
+4.  **Frontend Cliente (Público)**
     ```bash
     cd frontend-client
     npm install
     npm run dev
-    # Service listens on Port 4321
+    # El servicio escucha en el Puerto 4321
     ```
 
-## 5. Directory Structure
+## 5. Estructura de Directorios
 
-*   **/backend**: API services, business logic, authentication, and database repositories.
-*   **/frontend-admin**: Single Page Application (SPA) for content management and restaurant configuration.
-*   **/frontend-client**: Multi-tenant SSR application serving the public facing websites.
+*   **/backend**: Servicios API, lógica de negocio, autenticación y repositorios de base de datos.
+*   **/frontend-admin**: Single Page Application (SPA) para gestión de contenido y configuración de restaurantes.
+*   **/frontend-client**: Aplicación SSR multi-tenant que sirve los sitios web públicos.
