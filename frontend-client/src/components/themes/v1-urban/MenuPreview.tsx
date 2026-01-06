@@ -67,6 +67,8 @@ export const MenuPreviewSlider = ({ products, menuLink, slug }: MenuPreviewSlide
             <div className="text-center mt-12">
                 <a
                     href={menuLink}
+                    target={menuLink.startsWith('http') ? '_blank' : undefined}
+                    rel={menuLink.startsWith('http') ? 'noopener noreferrer' : undefined}
                     className="bg-black text-white px-10 py-4 uppercase tracking-widest text-sm hover:bg-gray-800 transition-colors"
                 >
                     Ver Menú Completo

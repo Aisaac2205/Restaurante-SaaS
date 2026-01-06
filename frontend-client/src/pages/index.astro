@@ -58,7 +58,11 @@ const { restaurant, categories } = menuData;
 // Aplanamos productos para el slider (top items)
 const allProducts = categories.flatMap((c) => c.products);
 // Al usar variable de entorno, la app corre en la raíz para ese tenant.
-const menuLink = `/menu`;
+const menuMode = restaurant.menu_mode || "INTERACTIVE";
+const menuPdfUrl = restaurant.menu_pdf_url;
+
+const menuLink = menuMode === "PDF" && menuPdfUrl ? menuPdfUrl : `/menu`;
+const showCart = menuMode !== "PDF";
 const features = restaurant.features_config || {};
 const showVideo = features["feat_video"] === true;
 const showServices = features["feat_services"] === true;
@@ -86,6 +90,7 @@ const themeMode = restaurant.theme_mode || "v1-urban";
 				menuLink={menuLink}
 				homeLink="/"
 				features={features}
+				showCart={showCart}
 			/>
 		) : (
 			<HeaderV2
@@ -96,6 +101,7 @@ const themeMode = restaurant.theme_mode || "v1-urban";
 				features={features}
 				showVideo={showVideo}
 				showServices={showServices}
+				showCart={showCart}
 			/>
 		)
 	}
@@ -181,6 +187,8 @@ const themeMode = restaurant.theme_mode || "v1-urban";
 						socials={{
 							instagram: restaurant.instagram_username,
 						}}
+						menuLink={menuLink}
+						homeLink="/"
 					/>
 				</>
 			) : (

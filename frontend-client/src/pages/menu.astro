@@ -42,6 +42,11 @@ const themeMode = restaurant.theme_mode || "v1-urban";
 const features = restaurant.features_config || {};
 // Aplanamos productos para pasar al componente
 const allProducts = categories.flatMap((c) => c.products);
+
+const menuMode = restaurant.menu_mode || "INTERACTIVE";
+const menuPdfUrl = restaurant.menu_pdf_url;
+const menuLink = menuMode === "PDF" && menuPdfUrl ? menuPdfUrl : `/menu`;
+const showCart = menuMode !== "PDF";
 ---
 
 <Layout
@@ -58,6 +63,7 @@ const allProducts = categories.flatMap((c) => c.products);
         logoUrl={restaurant.logo_url}
         name={restaurant.name}
         homeLink="/"
+        showCart={showCart}
     />
 
     <main>
@@ -81,6 +87,8 @@ const allProducts = categories.flatMap((c) => c.products);
                         socials={{
                             instagram: restaurant.instagram_username,
                         }}
+                        menuLink={menuLink}
+                        homeLink="/"
                     />
                 </>
             ) : (

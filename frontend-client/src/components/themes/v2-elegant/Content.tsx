@@ -73,6 +73,8 @@ export const ContentSection = ({ image, title, body, menuLink }: ContentSectionP
                     <div className="order-3 lg:hidden flex justify-center w-full mt-4">
                         <a
                             href={menuLink}
+                            target={menuLink.startsWith('http') ? '_blank' : undefined}
+                            rel={menuLink.startsWith('http') ? 'noopener noreferrer' : undefined}
                             className="inline-flex group items-center text-sm uppercase tracking-widest font-medium border-b border-white pb-1 hover:text-gray-300 hover:border-gray-300 transition-all"
                         >
                             Nuestra Carta

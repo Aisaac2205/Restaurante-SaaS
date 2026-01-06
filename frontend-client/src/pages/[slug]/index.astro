@@ -53,7 +53,12 @@ if (!menuData) {
 
 const { restaurant, categories } = menuData;
 const features = restaurant.features_config || {};
-const menuLink = `/${slug}/menu`;
+const menuMode = restaurant.menu_mode || "INTERACTIVE";
+const menuPdfUrl = restaurant.menu_pdf_url;
+
+const menuLink =
+    menuMode === "PDF" && menuPdfUrl ? menuPdfUrl : `/${slug}/menu`;
+
 const themeMode = restaurant.theme_mode || "v1-urban";
 
 // Toggleable sections (from Admin Panel)
@@ -62,6 +67,8 @@ const showServices = features["feat_services"] === true;
 
 // Flatten products for MenuPreviewSlider
 const allProducts = categories.flatMap((cat) => cat.products);
+
+const showCart = menuMode !== "PDF";
 ---
 
 <Layout
@@ -82,6 +89,7 @@ const allProducts = categories.flatMap((cat) => cat.products);
                 menuLink={menuLink}
                 homeLink={`/${slug}`}
                 features={features}
+                showCart={showCart}
             />
         ) : (
             <HeaderV2
@@ -92,9 +100,11 @@ const allProducts = categories.flatMap((cat) => cat.products);
                 features={features}
                 showVideo={showVideo}
                 showServices={showServices}
+                showCart={showCart}
             />
         )
     }
+    // ...
 
     <main>
         {
@@ -129,6 +139,7 @@ const allProducts = categories.flatMap((cat) => cat.products);
                             <ServicesV1
                                 client:visible
                                 services={restaurant.services_data}
+                                restaurantPhone={restaurant.whatsapp_number}
                             />
                         </div>
                     )}
@@ -177,6 +188,8 @@ const allProducts = categories.flatMap((cat) => cat.products);
                         socials={{
                             instagram: restaurant.instagram_username,
                         }}
+                        menuLink={menuLink}
+                        homeLink={`/${slug}`}
                     />
                 </>
             ) : (
@@ -204,6 +217,7 @@ const allProducts = categories.flatMap((cat) => cat.products);
                     <ServicesV2
                         client:visible
                         services={restaurant.services_data}
+                        restaurantPhone={restaurant.whatsapp_number}
                     />
 
                     {/* Menu Preview / Featured */}

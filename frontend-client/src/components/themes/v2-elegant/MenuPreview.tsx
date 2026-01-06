@@ -124,6 +124,8 @@ export const MenuPreviewSlider = ({ products, menuLink }: MenuPreviewSliderProps
             <div className="text-center mt-20">
                 <a
                     href={menuLink}
+                    target={menuLink.startsWith('http') ? '_blank' : undefined}
+                    rel={menuLink.startsWith('http') ? 'noopener noreferrer' : undefined}
                     className="inline-block px-12 py-4 border border-white text-white text-xs uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-colors"
                 >
                     Menú Completo

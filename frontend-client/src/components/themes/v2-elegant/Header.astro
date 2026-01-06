@@ -9,6 +9,7 @@ interface Props {
     features?: Record<string, boolean>;
     showVideo?: boolean;
     showServices?: boolean;
+    showCart?: boolean;
 }
 
 const {
@@ -19,6 +20,7 @@ const {
     features = {},
     showVideo = false,
     showServices = false,
+    showCart = true,
 } = Astro.props;
 
 const hasVideo = showVideo || !!features["feat_video"];
@@ -70,6 +72,14 @@ const navLinks = [
                 navLinks.map((link) => (
                     <a
                         href={link.href}
+                        target={
+                            link.href.startsWith("http") ? "_blank" : undefined
+                        }
+                        rel={
+                            link.href.startsWith("http")
+                                ? "noopener noreferrer"
+                                : undefined
+                        }
                         class:list={[
                             "nav-link text-[13px] font-medium tracking-wider transition-colors py-2",
                             link.isHighlighted
@@ -86,11 +96,15 @@ const navLinks = [
         <!-- Right Side: CTA -->
         <div class="flex items-center gap-4 min-w-[180px] justify-end">
             <!-- Cart Icon -->
-            <HeaderCart client:only="react" />
+            {showCart && <HeaderCart client:only="react" />}
 
             <!-- ORDER ONLINE Button -->
             <a
                 href={menuLink}
+                target={menuLink.startsWith("http") ? "_blank" : undefined}
+                rel={menuLink.startsWith("http")
+                    ? "noopener noreferrer"
+                    : undefined}
                 class="hidden md:inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 text-xs font-semibold tracking-widest uppercase hover:bg-gray-800 transition-all duration-200 shadow-md hover:shadow-lg"
             >
                 ORDENAR
@@ -152,6 +166,10 @@ const navLinks = [
         <div class="px-8 pt-4">
             <a
                 href={menuLink}
+                target={menuLink.startsWith("http") ? "_blank" : undefined}
+                rel={menuLink.startsWith("http")
+                    ? "noopener noreferrer"
+                    : undefined}
                 class="block w-full bg-gray-900 text-white text-center py-3 text-xs font-semibold tracking-widest uppercase hover:bg-gray-800 transition-colors"
             >
                 ORDENAR EN LÍNEA

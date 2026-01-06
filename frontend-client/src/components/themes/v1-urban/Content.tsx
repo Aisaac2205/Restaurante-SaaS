@@ -54,6 +54,8 @@ export const ContentSection = ({ image, title, body, image2, title2, body2, menu
                             </p>
                             <a
                                 href={menuLink}
+                                target={menuLink.startsWith('http') ? '_blank' : undefined}
+                                rel={menuLink.startsWith('http') ? 'noopener noreferrer' : undefined}
                                 className="border border-white text-white px-8 py-3 uppercase tracking-widest text-sm hover:bg-white hover:text-black transition-colors"
                             >
                                 Ver Menú

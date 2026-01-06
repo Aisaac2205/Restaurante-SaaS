@@ -25,7 +25,7 @@ export const ServicesSection = ({ services, restaurantPhone }: ServicesSectionPr
     };
 
     return (
-        <section className="relative py-32 md:py-48 bg-stone-900 overflow-hidden">
+        <section className="relative h-[800px] bg-stone-900 overflow-hidden flex items-center">
             {/* Background Image with Overlay */}
             <div className="absolute inset-0 z-0">
                 {service.image_url ? (

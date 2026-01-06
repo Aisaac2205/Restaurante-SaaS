@@ -27,14 +27,14 @@ export const ServicesSection = ({ services, restaurantPhone }: ServicesSectionPr
     };
 
     return (
-        <section id="services" className="relative py-32 md:py-48 bg-white text-stone-900 overflow-hidden">
+        <section id="services" className="relative h-[800px] bg-white text-stone-900 overflow-hidden flex items-center">
             {/* Background Image with Parallax-like effect */}
             <div className="absolute inset-0 z-0">
                 {service.image_url ? (
                     <img
                         src={service.image_url}
                         alt={service.title}
-                        className="w-full h-full object-cover scale-105"
+                        className="w-full h-full object-cover"
                     />
                 ) : (
                     <div className="w-full h-full bg-stone-200" />

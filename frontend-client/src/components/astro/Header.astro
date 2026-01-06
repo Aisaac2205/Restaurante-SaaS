@@ -7,6 +7,7 @@ interface Props {
     menuLink?: string;
     homeLink?: string;
     features?: Record<string, boolean>;
+    showCart?: boolean;
 }
 
 const {
@@ -15,6 +16,7 @@ const {
     menuLink = "/menu",
     homeLink = "/",
     features = {},
+    showCart = true,
 } = Astro.props;
 
 const hasVideo = features["feat_video"] === true;
@@ -65,6 +67,14 @@ const navLinks = [
                 navLinks.map((link) => (
                     <a
                         href={link.href}
+                        target={
+                            link.href.startsWith("http") ? "_blank" : undefined
+                        }
+                        rel={
+                            link.href.startsWith("http")
+                                ? "noopener noreferrer"
+                                : undefined
+                        }
                         data-astro-reload={
                             link.href.includes("#") ? "" : undefined
                         }
@@ -84,11 +94,15 @@ const navLinks = [
         <!-- Right Side: CTA -->
         <div class="flex items-center gap-4 min-w-[180px] justify-end">
             <!-- Cart Icon -->
-            <HeaderCart client:only="react" />
+            {showCart && <HeaderCart client:only="react" />}
 
             <!-- ORDER ONLINE Button -->
             <a
                 href={menuLink}
+                target={menuLink.startsWith("http") ? "_blank" : undefined}
+                rel={menuLink.startsWith("http")
+                    ? "noopener noreferrer"
+                    : undefined}
                 class="hidden md:inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 text-xs font-semibold tracking-widest uppercase hover:bg-gray-800 transition-all duration-200 shadow-md hover:shadow-lg"
             >
                 ORDENAR
@@ -154,7 +168,7 @@ const navLinks = [
 
         <!-- Cart & Close Button -->
         <div class="flex items-center gap-4">
-            <HeaderCart client:only="react" />
+            {showCart && <HeaderCart client:only="react" />}
             <button
                 id="mobile-menu-close"
                 class="p-2 text-gray-700 hover:text-gray-900 transition-colors"

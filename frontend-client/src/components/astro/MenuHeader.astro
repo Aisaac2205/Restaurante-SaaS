@@ -5,9 +5,10 @@ interface Props {
     logoUrl: string | null;
     name: string;
     homeLink?: string;
+    showCart?: boolean;
 }
 
-const { logoUrl, name, homeLink = "/" } = Astro.props;
+const { logoUrl, name, homeLink = "/", showCart = true } = Astro.props;
 
 // Tailwind classes for navigation links
 const navLinkClass =
@@ -42,7 +43,7 @@ const navLinkClass =
 
         {/* Right: Cart & Hamburger */}
         <div class="flex items-center gap-4">
-            <HeaderCart client:only="react" />
+            {showCart && <HeaderCart client:only="react" />}
 
             <button
                 id="menu-toggle"
@@ -105,7 +106,7 @@ const navLinkClass =
 
         {/* Cart & Close Button */}
         <div class="flex items-center gap-4">
-            <HeaderCart client:only="react" />
+            {showCart && <HeaderCart client:only="react" />}
             <button
                 id="menu-close"
                 class="p-2 text-gray-700 hover:text-gray-900 transition-colors"
