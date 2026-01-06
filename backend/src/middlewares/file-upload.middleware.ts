@@ -6,22 +6,37 @@ import { Request } from 'express';
 const storage = multer.memoryStorage();
 
 // Filtro para aceptar solo imágenes
-const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const imageFileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
     if (allowedMimeTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        // Rechazamos el archivo si no es imagen, pero no lanzamos error fatal, Multer lo maneja.
-        // Podemos pasar un error si queremos que falle explícitamente.
         cb(new Error('Formato de archivo no válido. Solo JPG, PNG y WEBP permitidos.'));
+    }
+};
+
+// Filtro para aceptar solo PDFs
+const pdfFileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    if (file.mimetype === 'application/pdf') {
+        cb(null, true);
+    } else {
+        cb(new Error('Formato de archivo no válido. Solo PDF permitido.'));
     }
 };
 
 export const fileUploadMiddleware = multer({
     storage,
-    fileFilter,
+    fileFilter: imageFileFilter,
     limits: {
         fileSize: 5 * 1024 * 1024, // Limite de 5MB
+    },
+});
+
+export const pdfUploadMiddleware = multer({
+    storage,
+    fileFilter: pdfFileFilter,
+    limits: {
+        fileSize: 10 * 1024 * 1024, // Limite de 10MB para PDF (a veces son grandes)
     },
 });

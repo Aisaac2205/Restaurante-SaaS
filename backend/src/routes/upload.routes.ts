@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { UploadController } from '../controllers/upload.controller';
 import { validateJWT } from '../middlewares/auth.middleware';
-import { fileUploadMiddleware } from '../middlewares/file-upload.middleware';
+import { fileUploadMiddleware, pdfUploadMiddleware } from '../middlewares/file-upload.middleware';
 import { videoUploadMiddleware } from '../middlewares/video-upload.middleware';
 
 const router = Router();
@@ -35,6 +35,6 @@ router.post('/video', videoUploadMiddleware.single('video'), uploadController.up
  * Sube un PDF de menú.
  * Field name esperado en form-data: "pdf"
  */
-router.post('/menu-pdf', fileUploadMiddleware.single('pdf'), uploadController.uploadMenuPdf);
+router.post('/menu-pdf', pdfUploadMiddleware.single('pdf'), uploadController.uploadMenuPdf);
 
 export default router;

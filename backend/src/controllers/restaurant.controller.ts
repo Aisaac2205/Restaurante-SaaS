@@ -49,14 +49,16 @@ export class RestaurantController {
                 name, whatsapp_number, primary_color, logo_url, hero_image_url,
                 hero_title, hero_subtitle, content_section_image, content_section_title, content_section_body,
                 video_section_title, video_section_subtitle, video_poster_url, video_url,
-                services_data, instagram_username, instagram_images, enable_pickup, enable_delivery, features_config, theme_mode
+                services_data, instagram_username, instagram_images, enable_pickup, enable_delivery, features_config, theme_mode,
+                menu_mode, menu_pdf_url
             } = req.body;
 
             const updated = await this.repository.updateRestaurant(user.id, {
                 name, whatsapp_number, primary_color, logo_url, hero_image_url,
                 hero_title, hero_subtitle, content_section_image, content_section_title, content_section_body,
                 video_section_title, video_section_subtitle, video_poster_url, video_url,
-                services_data, instagram_username, instagram_images, enable_pickup, enable_delivery, features_config, theme_mode
+                services_data, instagram_username, instagram_images, enable_pickup, enable_delivery, features_config, theme_mode,
+                menu_mode, menu_pdf_url
             });
 
             res.json(updated);
@@ -125,7 +127,9 @@ export class RestaurantController {
                 return;
             }
 
-            const updated = await this.repository.updateRestaurant(id, req.body);
+            const updated = await this.repository.updateRestaurant(id, {
+                ...req.body
+            });
             res.json(updated);
         } catch (error) {
             console.error('Error updating restaurant:', error);

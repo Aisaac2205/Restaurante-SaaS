@@ -84,7 +84,7 @@ export class UploadController {
     private async optimizeAndReplaceFile(file: Express.Multer.File): Promise<void> {
         try {
             const optimizedBuffer = await sharp(file.buffer)
-                .resize({ width: 800, withoutEnlargement: true })
+                .resize({ width: 5120, withoutEnlargement: true })
                 .webp({ quality: 80 })
                 .toBuffer();
 
