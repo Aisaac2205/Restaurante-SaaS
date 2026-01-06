@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
 import { $isCartOpen, setIsCartOpen } from '@/store/uiStore';
-import { $cartItems, $cartTotal, removeFromCart, updateQuantity, clearCart } from '@/store/cartStore';
+import { $cartItems, $cartTotal, removeFromCart, updateQuantity, clearCart, initializeCart } from '@/store/cartStore';
 import { formatCurrency } from '@/utils/currency';
 import { generateWhatsAppLink } from '@/utils/whatsapp';
 import { X, Trash2, Plus, Minus, MessageCircle, MapPin, Store, User, Phone } from 'lucide-react';
@@ -12,6 +12,7 @@ interface Props {
     enablePickup?: boolean;
     enableDelivery?: boolean;
     restaurantId?: number;
+    restaurantSlug?: string;
 }
 
 export const CartDrawer: React.FC<Props> = ({
@@ -19,7 +20,8 @@ export const CartDrawer: React.FC<Props> = ({
     restaurantName,
     enablePickup = true,
     enableDelivery = false,
-    restaurantId
+    restaurantId,
+    restaurantSlug = ''
 }) => {
     const isOpen = useStore($isCartOpen);
     const items = useStore($cartItems);
@@ -36,6 +38,13 @@ export const CartDrawer: React.FC<Props> = ({
     const [errors, setErrors] = useState<Record<string, boolean>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState(false);
+
+    // Initialize cart for this restaurant (multi-tenant isolation)
+    useEffect(() => {
+        if (restaurantSlug) {
+            initializeCart(restaurantSlug);
+        }
+    }, [restaurantSlug]);
 
     // Initialize delivery method
     useEffect(() => {

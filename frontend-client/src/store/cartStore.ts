@@ -1,28 +1,63 @@
 import { atom, computed } from 'nanostores';
 import type { CartItem, Product } from '@/types';
 
-// Persistent key for localStorage
-const CART_KEY = 'restaurant_cart';
+// Current restaurant slug (set by the app when loading a restaurant)
+export const $currentRestaurantSlug = atom<string>('');
 
-// Initialize cart from localStorage (client-side only)
-function getInitialCart(): CartItem[] {
-    if (typeof window === 'undefined') return [];
+// Helper to get the storage key for the current restaurant
+function getCartKey(slug: string): string {
+    return `cart_${slug}`;
+}
+
+// Initialize cart from localStorage for a specific restaurant
+function getCartFromStorage(slug: string): CartItem[] {
+    if (typeof window === 'undefined' || !slug) return [];
     try {
-        const stored = localStorage.getItem(CART_KEY);
+        const stored = localStorage.getItem(getCartKey(slug));
         return stored ? JSON.parse(stored) : [];
     } catch {
         return [];
     }
 }
 
-// Cart items store
-export const $cartItems = atom<CartItem[]>(getInitialCart());
+// Save cart to localStorage for a specific restaurant
+function saveCartToStorage(slug: string, items: CartItem[]): void {
+    if (typeof window === 'undefined' || !slug) return;
+    try {
+        localStorage.setItem(getCartKey(slug), JSON.stringify(items));
+    } catch (error) {
+        console.error('Error saving cart to localStorage:', error);
+    }
+}
 
-// Persist to localStorage on change (client-side only)
+// Cart items store
+export const $cartItems = atom<CartItem[]>([]);
+
+// Initialize cart when restaurant slug changes
 if (typeof window !== 'undefined') {
-    $cartItems.subscribe((items) => {
-        localStorage.setItem(CART_KEY, JSON.stringify(items));
+    $currentRestaurantSlug.subscribe((slug) => {
+        if (slug) {
+            const items = getCartFromStorage(slug);
+            $cartItems.set(items);
+        } else {
+            $cartItems.set([]);
+        }
     });
+
+    // Persist to localStorage on cart change
+    $cartItems.subscribe((items) => {
+        const slug = $currentRestaurantSlug.get();
+        if (slug) {
+            saveCartToStorage(slug, [...items]);
+        }
+    });
+}
+
+// Function to initialize the cart for a specific restaurant
+export function initializeCart(slug: string): void {
+    if ($currentRestaurantSlug.get() !== slug) {
+        $currentRestaurantSlug.set(slug);
+    }
 }
 
 // Computed: total items count
