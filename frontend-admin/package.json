@@ -9,8 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "vite preview --host",
-    "start:prod": "vite preview --host",
-    "postinstall": "npm run build"
+    "start:prod": "vite preview --host"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

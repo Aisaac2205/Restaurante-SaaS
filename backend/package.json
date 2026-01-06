@@ -8,7 +8,6 @@
         "start:prod": "node dist/server.js",
         "dev": "ts-node src/server.ts",
         "build": "tsc",
-        "postinstall": "npm run build",
         "lint": "eslint src"
     },
     "keywords": [],
