@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
 import { $isCartOpen, setIsCartOpen } from '@/store/uiStore';
-import { $cartItems, $cartTotal, removeFromCart, updateQuantity } from '@/store/cartStore';
+import { $cartItems, $cartTotal, removeFromCart, updateQuantity, clearCart } from '@/store/cartStore';
 import { formatCurrency } from '@/utils/currency';
 import { generateWhatsAppLink } from '@/utils/whatsapp';
 import { X, Trash2, Plus, Minus, MessageCircle, MapPin, Store, User, Phone } from 'lucide-react';
@@ -100,12 +100,14 @@ export const CartDrawer: React.FC<Props> = ({
                 }))
             });
 
-            // Success
+            // Success - Clear cart immediately
+            clearCart();
             setOrderSuccess(true);
-            setTimeout(() => {
-                // Clear cart immediately
-                $cartItems.set([]);
-            }, 1000);
+            // Reset form fields
+            setFirstName('');
+            setLastName('');
+            setPhone('');
+            setAddress('');
 
         } catch (error) {
             console.error('Order failed:', error);
@@ -125,7 +127,7 @@ export const CartDrawer: React.FC<Props> = ({
                     </div>
                     <h2 className="text-2xl font-bold mb-2">¡Pedido Recibido!</h2>
                     <p className="text-gray-600 mb-6">Tu orden ha sido enviada a la cocina. Te avisaremos cuando esté lista.</p>
-                    <button onClick={() => { setIsCartOpen(false); setOrderSuccess(false); window.location.reload(); }} className="bg-black text-white px-6 py-3 rounded-xl font-bold">
+                    <button onClick={() => { setIsCartOpen(false); setOrderSuccess(false); }} className="bg-black text-white px-6 py-3 rounded-xl font-bold">
                         Cerrar
                     </button>
                 </div>
