@@ -1,0 +1,258 @@
+---
+import { HeaderCart } from "@/components/react/HeaderCart";
+
+interface Props {
+    logoUrl: string | null;
+    name: string;
+    menuLink?: string;
+    homeLink?: string;
+    features?: Record<string, boolean>;
+    showVideo?: boolean;
+    showServices?: boolean;
+}
+
+const {
+    logoUrl,
+    name,
+    menuLink = "/menu",
+    homeLink = "/",
+    features = {},
+    showVideo = false,
+    showServices = false,
+} = Astro.props;
+
+const hasVideo = showVideo || !!features["feat_video"];
+const hasServices = showServices || !!features["feat_services"];
+
+// Build navigation links based on active features
+const navLinks = [
+    { label: "INICIO", href: `#hero`, show: true },
+    { label: "NOSOTROS", href: `#content`, show: true },
+    { label: "MENÚ", href: menuLink, isHighlighted: true, show: true },
+    { label: "SERVICIOS", href: `#services`, show: hasServices },
+    { label: "VIDEO", href: `#video`, show: hasVideo },
+    { label: "SÍGUENOS", href: `#instagram`, show: true },
+].filter((link) => link.show);
+---
+
+<header
+    class="bg-white border-b border-gray-200/60 fixed top-0 left-0 w-full z-[100] h-20 shadow-sm"
+>
+    <div
+        class="max-w-7xl mx-auto h-full flex items-center justify-between px-4 lg:px-8"
+    >
+        <!-- Logo & Name -->
+        <a href={homeLink} class="flex items-center gap-3 group min-w-[180px]">
+            {
+                logoUrl ? (
+                    <img
+                        src={logoUrl}
+                        alt={name}
+                        class="w-10 h-10 object-contain"
+                    />
+                ) : (
+                    <div class="text-2xl">🍴</div>
+                )
+            }
+            <span
+                class="font-serif font-bold text-base md:text-lg tracking-wide text-gray-900 uppercase group-hover:text-gray-600 transition-colors whitespace-nowrap truncate max-w-[200px] sm:max-w-none"
+            >
+                {name}
+            </span>
+        </a>
+
+        <!-- Centered Navigation -->
+        <nav
+            class="hidden lg:flex items-center gap-8 absolute left-1/2 -translate-x-1/2"
+            id="main-nav"
+        >
+            {
+                navLinks.map((link) => (
+                    <a
+                        href={link.href}
+                        class:list={[
+                            "nav-link text-[13px] font-medium tracking-wider transition-colors py-2",
+                            link.isHighlighted
+                                ? "text-gray-900 border-b-2 border-gray-900"
+                                : "text-gray-600 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300",
+                        ]}
+                    >
+                        {link.label}
+                    </a>
+                ))
+            }
+        </nav>
+
+        <!-- Right Side: CTA -->
+        <div class="flex items-center gap-4 min-w-[180px] justify-end">
+            <!-- Cart Icon -->
+            <HeaderCart client:only="react" />
+
+            <!-- ORDER ONLINE Button -->
+            <a
+                href={menuLink}
+                class="hidden md:inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 text-xs font-semibold tracking-widest uppercase hover:bg-gray-800 transition-all duration-200 shadow-md hover:shadow-lg"
+            >
+                ORDENAR
+            </a>
+
+            <!-- Mobile Menu Button -->
+            <button
+                id="mobile-menu-btn"
+                class="lg:hidden p-2 text-gray-700 hover:text-gray-900 transition-colors"
+                aria-label="Abrir menú"
+            >
+                <svg
+                    class="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.5"
+                        d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Decorative line under header -->
+    <div
+        class="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 h-[2px] bg-gray-300"
+    >
+    </div>
+</header>
+
+<!-- Mobile Navigation Overlay -->
+<div
+    id="mobile-menu"
+    class="fixed inset-0 bg-black/60 z-[99] hidden opacity-0 transition-opacity duration-300"
+>
+    <nav
+        class="absolute top-20 left-0 right-0 bg-white shadow-2xl py-6 transform -translate-y-4 opacity-0 transition-all duration-300"
+        id="mobile-nav"
+    >
+        {
+            navLinks.map((link) => (
+                <a
+                    href={link.href}
+                    class:list={[
+                        "mobile-nav-link nav-link block px-8 py-4 text-sm font-medium tracking-wider uppercase transition-colors",
+                        link.isHighlighted
+                            ? "text-gray-900 bg-gray-50"
+                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                    ]}
+                >
+                    {link.label}
+                </a>
+            ))
+        }
+        <div class="px-8 pt-4">
+            <a
+                href={menuLink}
+                class="block w-full bg-gray-900 text-white text-center py-3 text-xs font-semibold tracking-widest uppercase hover:bg-gray-800 transition-colors"
+            >
+                ORDENAR EN LÍNEA
+            </a>
+        </div>
+    </nav>
+</div>
+
+<script is:inline>
+    (function () {
+        function smoothScrollToId(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                const headerOffset = 80;
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition =
+                    elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth",
+                });
+                return true;
+            }
+            return false;
+        }
+
+        function handleNavClick(e) {
+            const target = e.target;
+            const link = target.closest(".nav-link");
+
+            if (!link) return;
+
+            const href = link.getAttribute("href");
+
+            // Si empieza con #, es un link de ancla
+            if (href && href.startsWith("#")) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const id = href.substring(1);
+                const scrolled = smoothScrollToId(id);
+
+                if (scrolled) {
+                    window.history.pushState({}, "", href);
+                }
+            }
+        }
+
+        function setupMobileMenu() {
+            const btn = document.getElementById("mobile-menu-btn");
+            const menu = document.getElementById("mobile-menu");
+            const nav = document.getElementById("mobile-nav");
+
+            function openMenu() {
+                menu?.classList.remove("hidden");
+                setTimeout(() => {
+                    menu?.classList.remove("opacity-0");
+                    nav?.classList.remove("-translate-y-4", "opacity-0");
+                }, 10);
+            }
+
+            function closeMenu() {
+                menu?.classList.add("opacity-0");
+                nav?.classList.add("-translate-y-4", "opacity-0");
+                setTimeout(() => {
+                    menu?.classList.add("hidden");
+                }, 300);
+            }
+
+            btn?.addEventListener("click", openMenu);
+            menu?.addEventListener("click", (e) => {
+                if (e.target === menu) closeMenu();
+            });
+
+            // Cerrar menú al hacer click en cualquier link
+            const mobileLinks = document.querySelectorAll(".mobile-nav-link");
+            mobileLinks.forEach((link) => {
+                link.addEventListener("click", closeMenu);
+            });
+        }
+
+        function init() {
+            // Agregar listeners a todos los nav-links
+            const navLinks = document.querySelectorAll(".nav-link");
+
+            navLinks.forEach((link) => {
+                link.addEventListener("click", handleNavClick);
+            });
+
+            setupMobileMenu();
+        }
+
+        // Inicializar inmediatamente
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", init);
+        } else {
+            init();
+        }
+
+        // Re-inicializar después de transiciones de Astro
+        document.addEventListener("astro:page-load", init);
+    })();
+</script>

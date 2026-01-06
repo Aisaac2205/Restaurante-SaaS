@@ -1,0 +1,94 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import MenuHeader from "@/components/astro/MenuHeader.astro";
+import { MenuPage as MenuPageV1 } from "@/components/themes/v1-urban/menu";
+import { Menu as MenuPageV2 } from "@/components/themes/v2-elegant/menu/Menu";
+import { CartButton } from "@/components/react/CartButton";
+import { CartDrawer } from "@/components/react/CartDrawer";
+import { PremiumFooter as FooterV1 } from "@/components/themes/v1-urban/Footer";
+import FooterV2 from "@/components/themes/v2-elegant/Footer.astro";
+import type { PublicMenu } from "@/types";
+
+// SIMULACIÓN DE DOMINIO:
+// En producción, leeríamos el "Host" header para determinar el slug.
+const SIMULATED_SLUG = "salem-delicius";
+
+let menuData: PublicMenu | null = null;
+
+try {
+    const API_URL = import.meta.env.API_URL || "http://localhost:3000/api";
+    const response = await fetch(`${API_URL}/menu/${SIMULATED_SLUG}`);
+
+    if (response.ok) {
+        menuData = await response.json();
+    } else {
+        console.error(
+            "Error fetching menu in menu.astro:",
+            response.status,
+            response.statusText,
+        );
+    }
+} catch (e) {
+    console.error("Network error in menu.astro:", e);
+}
+
+if (!menuData) {
+    console.error("No menuData found in menu.astro, redirecting to /404");
+    return Astro.redirect("/404");
+}
+
+const { restaurant, categories } = menuData;
+const themeMode = restaurant.theme_mode || "v1-urban";
+const features = restaurant.features_config || {};
+// Aplanamos productos para pasar al componente
+const allProducts = categories.flatMap((c) => c.products);
+---
+
+<Layout
+    title={`${restaurant.name} | Menú`}
+    primaryColor={restaurant.primary_color}
+    logoUrl={restaurant.logo_url}
+    restaurantPhone={restaurant.whatsapp_number}
+    restaurantName={restaurant.name}
+    enablePickup={restaurant.enable_pickup}
+    enableDelivery={restaurant.enable_delivery}
+>
+    {/* HEADER FIJO */}
+    <MenuHeader
+        logoUrl={restaurant.logo_url}
+        name={restaurant.name}
+        homeLink="/"
+    />
+
+    <main>
+        {/* MENU PAGE COMPONENT */}
+        {
+            themeMode === "v1-urban" ? (
+                <>
+                    <MenuPageV1
+                        client:load
+                        categories={categories}
+                        allProducts={allProducts}
+                    />
+                    <FooterV1
+                        restaurantName={restaurant.name}
+                        logoUrl={restaurant.logo_url}
+                        primaryColor={restaurant.primary_color}
+                        contact={{
+                            email: restaurant.email,
+                            phone: restaurant.whatsapp_number,
+                        }}
+                        socials={{
+                            instagram: restaurant.instagram_username,
+                        }}
+                    />
+                </>
+            ) : (
+                <>
+                    <MenuPageV2 client:load categories={categories} />
+                    <FooterV2 restaurantName={restaurant.name} />
+                </>
+            )
+        }
+    </main>
+</Layout>

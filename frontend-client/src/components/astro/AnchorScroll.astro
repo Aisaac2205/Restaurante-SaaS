@@ -1,0 +1,38 @@
+<script>
+    // Handle anchor scrolling manually for Astro View Transitions
+    document.addEventListener("astro:page-load", () => {
+        // Check if there's a hash in the URL on page load
+        if (window.location.hash) {
+            setTimeout(() => {
+                const id = window.location.hash.substring(1);
+                const element = document.getElementById(id);
+                if (element) {
+                    element.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                    });
+                }
+            }, 100);
+        }
+
+        // Handle hash link clicks
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+            anchor.addEventListener("click", function (e) {
+                const href = this.getAttribute("href");
+                if (href && href !== "#") {
+                    e.preventDefault();
+                    const id = href.substring(1);
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                        });
+                        // Update URL without triggering page reload
+                        window.history.pushState(null, "", href);
+                    }
+                }
+            });
+        });
+    });
+</script>

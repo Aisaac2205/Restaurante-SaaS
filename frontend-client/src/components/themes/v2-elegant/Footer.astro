@@ -1,0 +1,21 @@
+---
+interface Props {
+    restaurantName: string;
+}
+
+const { restaurantName } = Astro.props;
+---
+
+<footer
+    class="bg-stone-900 border-t border-stone-800 py-16 text-center text-stone-400"
+>
+    <h3 class="font-serif text-2xl text-stone-300 italic mb-4">
+        {restaurantName}
+    </h3>
+    <p class="text-xs uppercase tracking-widest mb-8 text-stone-500">
+        Experiencia Gastronómica
+    </p>
+    <p class="font-serif text-sm italic opacity-60">
+        &copy; {new Date().getFullYear()} Todos los derechos reservados.
+    </p>
+</footer>

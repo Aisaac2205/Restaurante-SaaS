@@ -1,0 +1,244 @@
+﻿---
+import Layout from "@/layouts/Layout.astro";
+// V1 IMPORTS
+import HeaderV1 from "@/components/astro/Header.astro";
+// V2 IMPORTS
+import HeaderV2 from "@/components/themes/v2-elegant/Header.astro";
+// V1 IMPORTS (Urban)
+import { LandingHero as HeroV1 } from "@/components/themes/v1-urban/Hero";
+import { ContentSection as ContentV1 } from "@/components/themes/v1-urban/Content";
+import { MenuPreviewSlider as MenuPreviewV1 } from "@/components/themes/v1-urban/MenuPreview";
+import { VideoSection as VideoV1 } from "@/components/themes/v1-urban/Video";
+import { ServicesSection as ServicesV1 } from "@/components/themes/v1-urban/Services";
+import { InstagramFeed as InstagramV1 } from "@/components/themes/v1-urban/Instagram";
+import { PremiumFooter as FooterV1 } from "@/components/themes/v1-urban/Footer";
+
+// V2 IMPORTS (Elegant)
+import { Hero as HeroV2 } from "@/components/themes/v2-elegant/Hero";
+import { Menu as MenuListV2 } from "@/components/themes/v2-elegant/menu/Menu";
+import { MenuPreviewSlider as MenuPreviewV2 } from "@/components/themes/v2-elegant/MenuPreview";
+import { VideoSection as VideoV2 } from "@/components/themes/v2-elegant/Video";
+import { InstagramFeed as InstagramV2 } from "@/components/themes/v2-elegant/Instagram";
+import { ContentSection as ContentV2 } from "@/components/themes/v2-elegant/Content";
+import { ServicesSection as ServicesV2 } from "@/components/themes/v2-elegant/Services";
+import FooterV2 from "@/components/themes/v2-elegant/Footer.astro";
+
+import type { PublicMenu } from "@/types";
+
+// STRATEGY CONFIG
+// Now driven by database
+
+// SIMULACIÓN DE DOMINIO:
+// En producción, leeríamos el "Host" header para determinar el slug.
+// Usamos variable de entorno para probar multi-tenancy localmente.
+const SIMULATED_SLUG = "salem-delicius";
+
+let menuData: PublicMenu | null = null;
+
+try {
+	const API_URL = import.meta.env.API_URL || "http://localhost:3000/api";
+	// Usamos la misma API de menú público que ya trae todo estructurado
+	const response = await fetch(`${API_URL}/menu/${SIMULATED_SLUG}`);
+
+	if (response.ok) {
+		menuData = await response.json();
+	} else {
+		console.error("Error fetching menu:", response.status);
+	}
+} catch (e) {
+	console.error("Network error:", e);
+}
+
+// Si falla la carga, mostramos un fallback básico (o error 404 custom)
+if (!menuData) {
+	return Astro.redirect("/404");
+}
+
+const { restaurant, categories } = menuData;
+// Aplanamos productos para el slider (top items)
+const allProducts = categories.flatMap((c) => c.products);
+// Al usar variable de entorno, la app corre en la raíz para ese tenant.
+const menuLink = `/menu`;
+const features = restaurant.features_config || {};
+const showVideo = features["feat_video"] === true;
+const showServices = features["feat_services"] === true;
+const themeMode = restaurant.theme_mode || "v1-urban";
+---
+
+<Layout
+	title={restaurant.name}
+	primaryColor={restaurant.primary_color}
+	logoUrl={restaurant.logo_url}
+	restaurantPhone={restaurant.whatsapp_number}
+	restaurantName={restaurant.name}
+	enablePickup={restaurant.enable_pickup}
+	enableDelivery={restaurant.enable_delivery}
+	restaurantId={restaurant.id}
+>
+	{/* HEADER FIJO */}
+	{
+		themeMode === "v1-urban" ? (
+			<HeaderV1
+				logoUrl={restaurant.logo_url}
+				name={restaurant.name}
+				menuLink={menuLink}
+				homeLink="/"
+				features={features}
+			/>
+		) : (
+			<HeaderV2
+				logoUrl={restaurant.logo_url}
+				name={restaurant.name}
+				menuLink={menuLink}
+				homeLink="/"
+				features={features}
+				showVideo={showVideo}
+				showServices={showServices}
+			/>
+		)
+	}
+	<main>
+		{
+			themeMode === "v1-urban" ? (
+				<>
+					{/* HERO V1 */}
+					<div id="hero">
+						<HeroV1
+							client:load
+							title={restaurant.hero_title || restaurant.name}
+							subtitle={restaurant.hero_subtitle}
+							bgImage={restaurant.hero_image_url}
+							primaryColor={restaurant.primary_color}
+							menuLink={menuLink}
+						/>
+					</div>
+
+					{/* CONTENT V1 */}
+					<div id="content">
+						<ContentV1
+							client:visible
+							image={restaurant.content_section_image}
+							title={restaurant.content_section_title}
+							body={restaurant.content_section_body}
+							image2={restaurant.content_section_2_image}
+							title2={restaurant.content_section_2_title}
+							body2={restaurant.content_section_2_body}
+							menuLink={menuLink}
+						/>
+					</div>
+
+					{/* SERVICES V1 */}
+					<div id="services">
+						<ServicesV1
+							client:visible
+							services={restaurant.services_data}
+						/>
+					</div>
+
+					{/* MENU PREVIEW V1 */}
+
+					<MenuPreviewV1
+						client:visible
+						products={allProducts}
+						menuLink={menuLink}
+					/>
+
+					{/* VIDEO V1 */}
+					<div id="video">
+						<VideoV1
+							client:only="react"
+							title={restaurant.video_section_title}
+							subtitle={restaurant.video_section_subtitle}
+							videoUrl={restaurant.video_url}
+							posterUrl={restaurant.video_poster_url}
+						/>
+					</div>
+
+					{/* INSTAGRAM V1 */}
+					<div id="instagram">
+						<InstagramV1
+							client:visible
+							username={restaurant.instagram_username}
+							images={restaurant.instagram_images}
+						/>
+					</div>
+
+					{/* FOOTER V1 */}
+
+					<FooterV1
+						restaurantName={restaurant.name}
+						logoUrl={restaurant.logo_url}
+						primaryColor={restaurant.primary_color}
+						contact={{
+							email: restaurant.email,
+							phone: restaurant.whatsapp_number,
+						}}
+						socials={{
+							instagram: restaurant.instagram_username,
+						}}
+					/>
+				</>
+			) : (
+				<>
+					{/* --- THEME V2: ELEGANT --- */}
+
+					<HeroV2
+						client:load
+						title={restaurant.hero_title || restaurant.name}
+						subtitle={restaurant.hero_subtitle ?? ""}
+						bgImage={restaurant.hero_image_url ?? undefined}
+						primaryColor={restaurant.primary_color}
+						menuLink={menuLink}
+					/>
+
+					{/* About / Content */}
+
+					<ContentV2
+						client:visible
+						image={restaurant.content_section_image}
+						title={restaurant.content_section_title}
+						body={restaurant.content_section_body}
+						menuLink={menuLink}
+					/>
+
+					{/* Services */}
+
+					<ServicesV2
+						client:visible
+						services={restaurant.services_data}
+					/>
+
+					{/* Menu Preview / Featured */}
+
+					<MenuPreviewV2
+						client:visible
+						products={allProducts}
+						menuLink={menuLink}
+					/>
+
+					{/* Video Section */}
+					{showVideo && (
+						<VideoV2
+							client:only="react"
+							title={restaurant.video_section_title}
+							subtitle={restaurant.video_section_subtitle}
+							videoUrl={restaurant.video_url}
+							posterUrl={restaurant.video_poster_url}
+						/>
+					)}
+
+					{/* Instagram */}
+
+					<InstagramV2
+						client:visible
+						username={restaurant.instagram_username}
+						images={restaurant.instagram_images || []}
+					/>
+
+					{/* Footer V2 (Simple) */}
+					<FooterV2 restaurantName={restaurant.name} />
+				</>
+			)
+		}
+	</main>
+</Layout>

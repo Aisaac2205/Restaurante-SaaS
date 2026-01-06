@@ -1,0 +1,44 @@
+---
+import Layout from "@/layouts/Layout.astro";
+
+// Use a neutral elegant style for the 404 page
+---
+
+<Layout
+    title="Página no encontrada"
+    primaryColor="#1c1917"
+    description="La página que buscas no existe."
+>
+    <div
+        class="min-h-screen flex flex-col items-center justify-center bg-stone-50 text-stone-900 px-6 text-center relative overflow-hidden"
+    >
+        {/* Decorative Background Text */}
+        <div
+            class="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden"
+        >
+            <span
+                class="text-[20rem] md:text-[30rem] font-serif font-bold text-stone-100 opacity-50 translate-y-20"
+            >
+                404
+            </span>
+        </div>
+
+        <div class="relative z-10 max-w-lg">
+            <h1 class="font-serif text-5xl md:text-6xl italic mb-6">
+                Página no encontrada
+            </h1>
+            <div class="w-16 h-1 bg-stone-900 mx-auto mb-8"></div>
+            <p class="text-stone-500 text-lg mb-10 font-light leading-relaxed">
+                Lo sentimos, no pudimos encontrar el menú o la página que estás
+                buscando. Por favor verifica la dirección o regresa al inicio.
+            </p>
+
+            <a
+                href="/"
+                class="inline-block bg-stone-900 text-white px-8 py-3 uppercase tracking-[0.2em] text-xs font-bold hover:bg-stone-700 transition-colors shadow-lg"
+            >
+                Volver al Inicio
+            </a>
+        </div>
+    </div>
+</Layout>

@@ -1,0 +1,42 @@
+---
+interface Props {
+    heroImageUrl: string | null;
+    name: string;
+}
+
+const { heroImageUrl, name } = Astro.props;
+---
+
+<div
+    id="hero"
+    class="relative w-full h-48 md:h-64 lg:h-80 overflow-hidden bg-gray-900"
+>
+    {
+        heroImageUrl ? (
+            <img
+                src={heroImageUrl}
+                alt={`Portada de ${name}`}
+                class="w-full h-full object-cover opacity-60"
+            />
+        ) : (
+            <div class="w-full h-full opacity-60 bg-gradient-to-r from-gray-800 to-gray-900" />
+        )
+    }
+
+    <div
+        class="absolute inset-0 flex items-center justify-center pointer-events-none"
+    >
+        <div class="text-center px-4">
+            <h2
+                class="font-serif text-3xl md:text-5xl font-bold text-white drop-shadow-md mb-2"
+            >
+                {name}
+            </h2>
+            <p
+                class="text-white/90 text-sm md:text-base font-medium uppercase tracking-widest"
+            >
+                Menú Digital
+            </p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,188 @@
+---
+import { HeaderCart } from "@/components/react/HeaderCart";
+
+interface Props {
+    logoUrl: string | null;
+    name: string;
+    homeLink?: string;
+}
+
+const { logoUrl, name, homeLink = "/" } = Astro.props;
+
+// Tailwind classes for navigation links
+const navLinkClass =
+    "text-sm font-medium tracking-wider uppercase text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-8 py-2 block w-full text-center transition-colors";
+---
+
+<header
+    class="bg-white border-b border-gray-200/60 fixed top-0 left-0 w-full z-[100] h-20 shadow-sm"
+>
+    <div
+        class="max-w-7xl mx-auto h-full flex items-center justify-between px-4 lg:px-8"
+    >
+        {/* Left: Logo & Name */}
+        <a href={homeLink} class="flex items-center gap-3 group">
+            {
+                logoUrl ? (
+                    <img
+                        src={logoUrl}
+                        alt={name}
+                        class="w-10 h-10 object-contain"
+                    />
+                ) : (
+                    <div class="text-2xl">🍴</div>
+                )
+            }
+            <span
+                class="font-serif font-bold text-base md:text-lg tracking-wide text-gray-900 uppercase group-hover:text-gray-600 transition-colors"
+            >
+                {name}
+            </span>
+        </a>
+
+        {/* Right: Cart & Hamburger */}
+        <div class="flex items-center gap-4">
+            <HeaderCart client:only="react" />
+
+            <button
+                id="menu-toggle"
+                class="p-2 text-gray-700 hover:text-gray-900 transition-colors z-[110]"
+                aria-label="Abrir menú"
+                aria-expanded="false"
+            >
+                <svg
+                    class="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    id="menu-icon"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.5"
+                        d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    {/* Decorative line */}
+    <div
+        class="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 h-[2px] bg-gray-300"
+    >
+    </div>
+</header>
+
+{/* Fullscreen Mobile Menu */}
+<div
+    id="menu-overlay"
+    class="fixed inset-0 bg-white z-[200] hidden opacity-0 transition-opacity duration-300"
+>
+    {/* Mobile Menu Header */}
+    <div
+        class="flex items-center justify-between px-4 h-20 border-b border-gray-100"
+    >
+        {/* Logo & Name */}
+        <a href={homeLink} class="flex items-center gap-3">
+            {
+                logoUrl ? (
+                    <img
+                        src={logoUrl}
+                        alt={name}
+                        class="w-10 h-10 object-contain"
+                    />
+                ) : (
+                    <div class="text-2xl">🍴</div>
+                )
+            }
+            <span
+                class="font-serif font-bold text-base tracking-wide text-gray-900 uppercase"
+            >
+                {name}
+            </span>
+        </a>
+
+        {/* Cart & Close Button */}
+        <div class="flex items-center gap-4">
+            <HeaderCart client:only="react" />
+            <button
+                id="menu-close"
+                class="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+                aria-label="Cerrar menú"
+            >
+                <svg
+                    class="w-7 h-7"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.5"
+                        d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    {/* Navigation Links */}
+    <nav class="px-6 py-8" id="menu-content">
+        <a
+            href={homeLink}
+            class="menu-link block py-5 text-lg font-medium tracking-wide uppercase transition-colors border-b border-gray-100 text-gray-600 hover:text-gray-900"
+            >INICIO</a
+        >
+        <a
+            href={`${homeLink}#content`}
+            class="menu-link block py-5 text-lg font-medium tracking-wide uppercase transition-colors border-b border-gray-100 text-gray-600 hover:text-gray-900"
+            >NOSOTROS</a
+        >
+        <a
+            href={`${homeLink}#services`}
+            class="menu-link block py-5 text-lg font-medium tracking-wide uppercase transition-colors border-b border-gray-100 text-gray-600 hover:text-gray-900"
+            >SERVICIOS</a
+        >
+        <a
+            href={`${homeLink}#video`}
+            class="menu-link block py-5 text-lg font-medium tracking-wide uppercase transition-colors border-b border-gray-100 text-gray-600 hover:text-gray-900"
+            >VIDEO</a
+        >
+        <a
+            href={`${homeLink}#instagram`}
+            class="menu-link block py-5 text-lg font-medium tracking-wide uppercase transition-colors border-b border-gray-100 text-gray-600 hover:text-gray-900"
+            >SÍGUENOS</a
+        >
+    </nav>
+</div>
+
+<script is:inline>
+    const toggleBtn = document.getElementById("menu-toggle");
+    const closeBtn = document.getElementById("menu-close");
+    const overlay = document.getElementById("menu-overlay");
+    const links = document.querySelectorAll(".menu-link");
+
+    function openMenu() {
+        overlay.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+        setTimeout(() => {
+            overlay.classList.remove("opacity-0");
+        }, 10);
+    }
+
+    function closeMenu() {
+        overlay.classList.add("opacity-0");
+        document.body.style.overflow = "";
+        setTimeout(() => {
+            overlay.classList.add("hidden");
+        }, 300);
+    }
+
+    toggleBtn?.addEventListener("click", openMenu);
+    closeBtn?.addEventListener("click", closeMenu);
+
+    links.forEach((link) => {
+        link.addEventListener("click", closeMenu);
+    });
+</script>

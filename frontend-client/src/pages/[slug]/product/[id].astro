@@ -1,0 +1,116 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/astro/Header.astro";
+import { ProductDetail as ProductDetailV1 } from "@/components/themes/v1-urban/menu/ProductDetail";
+import { ProductDetail as ProductDetailV2 } from "@/components/themes/v2-elegant/menu/ProductDetail";
+import { RelatedDishes } from "@/components/themes/v1-urban/menu/RelatedDishes";
+import { PremiumFooter as FooterV1 } from "@/components/themes/v1-urban/Footer";
+import FooterV2 from "@/components/themes/v2-elegant/Footer.astro";
+import { CartButton } from "@/components/react/CartButton";
+import { CartDrawer } from "@/components/react/CartDrawer";
+import type { PublicMenu, Product } from "@/types";
+
+const { slug, id } = Astro.params;
+
+if (!slug || !id) {
+    return Astro.redirect("/404");
+}
+
+let menuData: PublicMenu | null = null;
+let currentProduct: Product | null = null;
+let relatedProducts: Product[] = [];
+
+try {
+    const API_URL = import.meta.env.API_URL || "http://localhost:3000/api";
+    const response = await fetch(`${API_URL}/menu/${slug}`);
+
+    if (response.ok) {
+        menuData = await response.json();
+    } else {
+        console.error("Error fetching menu:", response.status);
+    }
+} catch (e) {
+    console.error("Network error:", e);
+}
+
+// Si no hay data o ID, redirigir
+if (!menuData) {
+    return Astro.redirect("/404");
+}
+
+const { restaurant, categories } = menuData;
+const themeMode = restaurant.theme_mode || "v1-urban";
+const allProducts = categories.flatMap((c) => c.products);
+
+currentProduct = allProducts.find((p) => p.id === Number(id)) || null;
+
+if (!currentProduct) {
+    return Astro.redirect("/404");
+}
+
+// Productos relacionados (simulado: 3 primeros diferentes al actual)
+relatedProducts = allProducts
+    .filter((p) => p.id !== currentProduct!.id)
+    .sort(() => 0.5 - Math.random()) // Shuffle simple
+    .slice(0, 3);
+
+const menuLink = `/${slug}/menu`;
+---
+
+<Layout
+    title={`${currentProduct.name} - ${restaurant.name}`}
+    primaryColor={restaurant.primary_color}
+    logoUrl={restaurant.logo_url}
+    restaurantPhone={restaurant.whatsapp_number}
+    restaurantName={restaurant.name}
+    enablePickup={restaurant.enable_pickup}
+    enableDelivery={restaurant.enable_delivery}
+    restaurantId={restaurant.id}
+>
+    {/* HEADER FIJO */}
+    <Header
+        logoUrl={restaurant.logo_url}
+        name={restaurant.name}
+        menuLink={menuLink}
+        homeLink={`/${slug}`}
+    />
+
+    <main class="pt-20 bg-gray-50/50 min-h-screen">
+        {/* Breadcrumb simple opcional o Back Link */}
+        {
+            /* Breadcrumb simple opcional or Back Link - REMOVED per user request */
+        }
+
+        {
+            themeMode === "v1-urban" ? (
+                <ProductDetailV1 client:load product={currentProduct} />
+            ) : (
+                <ProductDetailV2 client:load product={currentProduct} />
+            )
+        }
+
+        <div class="py-12">
+            <RelatedDishes client:visible products={relatedProducts} />
+        </div>
+    </main>
+
+    {/* FOOTER BASED ON THEME */}
+    {
+        themeMode === "v1-urban" ? (
+            <FooterV1
+                restaurantName={restaurant.name}
+                logoUrl={restaurant.logo_url}
+                primaryColor={restaurant.primary_color}
+                contact={{
+                    email: restaurant.email,
+                    phone: restaurant.whatsapp_number,
+                }}
+                socials={{
+                    instagram: restaurant.instagram_username,
+                }}
+            />
+        ) : (
+            <FooterV2 restaurantName={restaurant.name} />
+        )
+    }
+</Layout>

@@ -1,0 +1,66 @@
+---
+import type { Product } from "@/types";
+import { formatCurrency } from "@/utils/currency";
+import { AddToCartButton } from "@/components/react/AddToCartButton";
+
+interface Props {
+    product: Product;
+}
+
+const { product } = Astro.props;
+const { slug } = Astro.params;
+const productUrl = slug
+    ? `/${slug}/product/${product.id}`
+    : `/product/${product.id}`;
+---
+
+<article class="flex flex-col h-full group">
+    <a
+        href={productUrl}
+        class="block relative aspect-square md:aspect-[4/3] overflow-hidden bg-gray-100 mb-4 md:mb-6"
+    >
+        {
+            product.image_url ? (
+                <img
+                    src={product.image_url}
+                    alt={product.name}
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                />
+            ) : (
+                <div class="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50">
+                    <span class="text-sm">Sin imagen</span>
+                </div>
+            )
+        }
+    </a>
+
+    <a
+        href={productUrl}
+        class="flex-1 flex flex-col items-center text-center px-2"
+    >
+        <!-- Price above name -->
+        <span class="text-gray-500 text-xs md:text-sm mb-2 tracking-wide">
+            {formatCurrency(product.price)}
+        </span>
+
+        <!-- Product Name -->
+        <h3
+            class="font-serif font-medium text-sm md:text-xl text-gray-900 mb-2 md:mb-3 group-hover:text-gray-600 transition-colors leading-tight"
+        >
+            {product.name}
+        </h3>
+
+        <!-- Description -->
+        {
+            product.description && (
+                <p class="text-gray-500 text-xs md:text-sm line-clamp-2 mb-3 md:mb-4 max-w-xs leading-relaxed">
+                    {product.description}
+                </p>
+            )
+        }
+
+        <!-- Decorative Line -->
+        <div class="w-8 h-0.5 bg-gray-300 mt-auto"></div>
+    </a>
+</article>

@@ -1,0 +1,125 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import MenuHeader from "@/components/astro/MenuHeader.astro";
+import HeroSection from "@/components/astro/HeroSection.astro";
+import CategorySection from "@/components/astro/CategorySection.astro";
+import { CategorySlider } from "@/components/react/CategorySlider";
+import { CartButton } from "@/components/react/CartButton";
+import { CartDrawer } from "@/components/react/CartDrawer";
+import { PremiumFooter } from "@/components/themes/v1-urban/Footer";
+import { MenuPage as MenuPageV1 } from "@/components/themes/v1-urban/menu/MenuPage";
+import { Menu as MenuV2 } from "@/components/themes/v2-elegant/menu/Menu";
+import FooterV2 from "@/components/themes/v2-elegant/Footer.astro"; // Import V2 Footer
+import type { PublicMenu } from "@/types";
+
+const { slug } = Astro.params;
+
+if (!slug) {
+    return Astro.redirect("/404");
+}
+
+// Fetch menu data from backend API
+let menuData: PublicMenu | null = null;
+
+try {
+    const API_URL = import.meta.env.API_URL || "http://localhost:3000/api";
+    const response = await fetch(`${API_URL}/menu/${slug}`);
+
+    if (!response.ok) {
+        if (response.status === 404) return Astro.redirect("/404");
+        throw new Error("Failed to fetch menu");
+    }
+
+    menuData = await response.json();
+} catch (e) {
+    console.error(e);
+}
+
+if (!menuData) {
+    return Astro.redirect("/404");
+}
+
+const { restaurant, categories } = menuData;
+const allProducts = categories.flatMap((cat) => cat.products || []);
+const themeMode = restaurant.theme_mode || "v1-urban";
+const features = restaurant.features_config || {};
+const isPremium = features["feat_premium"] === true;
+const homeLink = `/${slug}`;
+---
+
+<Layout
+    title={`${restaurant.name} | Menú`}
+    primaryColor={restaurant.primary_color}
+    logoUrl={restaurant.logo_url}
+    restaurantName={restaurant.name}
+    enablePickup={restaurant.enable_pickup}
+    enableDelivery={restaurant.enable_delivery}
+    restaurantPhone={restaurant.whatsapp_number}
+    restaurantId={restaurant.id}
+>
+    <MenuHeader
+        name={restaurant.name}
+        logoUrl={restaurant.logo_url}
+        homeLink={homeLink}
+    />
+
+    <main
+        class={themeMode === "v1-urban" ? "min-h-screen pt-20" : "min-h-screen"}
+    >
+        {
+            themeMode === "v1-urban" ? (
+                <MenuPageV1
+                    client:load
+                    categories={categories}
+                    allProducts={allProducts}
+                    slug={slug}
+                />
+            ) : (
+                <MenuV2
+                    client:load
+                    categories={categories}
+                    heroImageUrl={restaurant.hero_image_url ?? undefined}
+                />
+            )
+        }
+    </main>
+
+    <!-- Footer -->
+    <!-- Footer -->
+    {
+        themeMode === "v1-urban" ? (
+            isPremium ? (
+                <PremiumFooter
+                    client:load
+                    restaurantName={restaurant.name}
+                    logoUrl={restaurant.logo_url}
+                    primaryColor={restaurant.primary_color}
+                    contact={{
+                        email: restaurant.email,
+                        phone: restaurant.whatsapp_number,
+                    }}
+                    socials={{
+                        instagram: restaurant.instagram_username,
+                    }}
+                />
+            ) : (
+                <footer class="bg-gray-900 text-white py-8 text-center">
+                    <div class="container mx-auto px-4">
+                        <p class="text-gray-400 text-sm">
+                            &copy; {new Date().getFullYear()} {restaurant.name}.
+                            Todos los derechos reservados.
+                        </p>
+                        <a
+                            href={homeLink}
+                            class="text-gray-500 hover:text-white text-sm mt-2 inline-block"
+                        >
+                            Volver al Inicio
+                        </a>
+                    </div>
+                </footer>
+            )
+        ) : (
+            <FooterV2 restaurantName={restaurant.name} />
+        )
+    }
+</Layout>
