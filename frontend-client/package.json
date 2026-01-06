@@ -8,6 +8,7 @@
     "preview": "astro preview",
     "start": "node dist/server/entry.mjs",
     "start:prod": "HOST=0.0.0.0 node dist/server/entry.mjs",
+    "postinstall": "npm run build",
     "astro": "astro"
   },
   "dependencies": {
