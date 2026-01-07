@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // URL Base del Backend. En desarrollo es localhost:3000
 // En producción debería venir de import.meta.env.VITE_API_URL
-export const baseURL = 'http://localhost:3000/api';
+export const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 const api = axios.create({
     baseURL,
